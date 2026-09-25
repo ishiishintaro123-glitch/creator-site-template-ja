@@ -58,7 +58,7 @@ content:
           media: images
           path: novels
       - name: episodes
-        label: 目次（一番下の「Add an item」で次の話を追加）
+        label: 目次
         type: object
         list:
           collapsible:
@@ -72,15 +72,16 @@ content:
             label: 公開日
             type: date
           - name: body
-            label: 本文（改行はそのまま表示されます。空行を入れると段落の区切りになります）
+            label: 本文
+            description: 改行はそのまま表示されます。空行を入れると段落の区切りになります。
             type: text
             pattern:
               regex: '\S'
               message: 本文を入力してください
       - name: import
-        label: 原稿をまとめて取り込む（.md / .txt）
+        label: 原稿をまとめて取り込む
         description: >-
-          【今はファイルを1つずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1つしか残りません（修正待ち）。
+          .md・.txt のファイルが使えます。【今はファイルを1つずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1つしか残りません（修正待ち）。
           選んだファイルは、ファイル名の番号順（第1話、第2話…第10話）に目次の最後へ追加されます。
           原稿の1行目が「# タイトル」なら話のタイトルになります。公開日は取り込んだ日になります。あとから各話の公開日の欄で変えられます。
           保存してから1〜2分で目次に入り、そのあとは本文を直接直せます。取り込みが終わるまで、この作品は編集しないでください。
@@ -90,7 +91,7 @@ content:
           multiple: true
           extensions: [md, txt]
       - name: tags
-        label: タグ（「Add an item」でタグを追加）
+        label: タグ
         type: string
         list: true
 
@@ -124,7 +125,7 @@ content:
           media: images
           path: manga
       - name: episodes
-        label: 目次（一番下の「Add an item」を押すと新しい話が増えます。ページの追加ではありません）
+        label: 目次（話の一覧）
         type: object
         list:
           collapsible:
@@ -138,8 +139,9 @@ content:
             label: 公開日
             type: date
           - name: pages
-            label: この話のページ（一番上が1ページ目です。「Upload」で1枚ずつ追加すると、アップロードした順に下へ並びます。2ページ目以降も、この「Upload」で追加します）
+            label: この話のページ
             description: >-
+              一番上が1ページ目です。「Upload」で1枚ずつ追加すると、アップロードした順に下へ並びます。2ページ目以降も、この「Upload」で追加します。
               【今は画像を1枚ずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1枚しか残りません（修正待ち）。
               並び順は左のつまみで入れ替えられます。PNG・JPEG・WebP、1枚4.5MBまで。
             type: file
@@ -148,7 +150,7 @@ content:
               path: manga
               multiple: true
       - name: tags
-        label: タグ（「Add an item」でタグを追加）
+        label: タグ
         type: string
         list: true
 
@@ -188,7 +190,7 @@ content:
         label: 公開日
         type: date
       - name: tags
-        label: タグ（「Add an item」でタグを追加）
+        label: タグ
         type: string
         list: true
 
@@ -270,14 +272,17 @@ content:
           GoogleやBingなどの検索結果には、これまでどおり表示されます。読まないよう「求める」だけで、従うかどうかは各社しだいです。
         type: boolean
       - name: ads
-        label: 広告（広告サービスで発行されたコードを、表示したい場所の欄に貼る）
+        label: 広告
+        description: 広告サービスで発行されたコードを、表示したい場所の欄に貼ります。空欄の場所には広告は表示されません。
         type: object
         fields:
           - name: provider
-            label: 広告サービス名（プライバシーポリシーに表示）
+            label: 広告サービス名
+            description: プライバシーポリシーに表示されます。広告コードを貼るときは必ず入れてください。
             type: string
           - name: providerPrivacyUrl
-            label: 広告サービスのプライバシーポリシーのURL
+            label: プライバシーポリシーのURL
+            description: 広告サービスのプライバシーポリシーのアドレスです（分かれば）。
             type: string
             pattern:
               regex: ^(https://.*)?$
@@ -303,5 +308,6 @@ content:
             options:
               format: html
           - name: adsTxt
-            label: ads.txt の内容（広告サービスから求められた場合のみ）
+            label: ads.txt の内容
+            description: 広告サービスから ads.txt の設置を求められた場合だけ、その内容を貼ります。
             type: text
