@@ -2,6 +2,8 @@
 import { siteConfig } from '../../site-config.mjs';
 
 const { siteName, author, ads } = siteConfig;
+// The author page only has contact details (an X link or other links) when the creator added some.
+const hasContact = siteConfig.xAccount !== '' || siteConfig.links.length > 0;
 ---
 
 <p>{siteName} ("this site") is a personal site where {author} publishes their own works. This policy explains how information about visitors is handled.</p>
@@ -36,5 +38,9 @@ const { siteName, author, ads } = siteConfig;
 <h2>Changes to this policy</h2>
 <p>This policy may be updated without notice when necessary. Changes take effect when they are posted on this page.</p>
 
-<h2>Contact</h2>
-<p>For questions about this policy, please use the contact details on the <a href="/author">author page</a>.</p>
+{hasContact && (
+	<>
+		<h2>Contact</h2>
+		<p>For questions about this policy, please use the contact details on the <a href="/author">author page</a>.</p>
+	</>
+)}

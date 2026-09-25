@@ -2,6 +2,8 @@
 import { siteConfig } from '../../site-config.mjs';
 
 const { siteName, author, ads } = siteConfig;
+// The author page only has contact details (an X link or other links) when the creator added some.
+const hasContact = siteConfig.xAccount !== '' || siteConfig.links.length > 0;
 ---
 
 <p>{siteName}（以下「当サイト」）は、{author}が運営する個人の作品サイトです。当サイトにおける閲覧者の情報の取り扱いについて、以下のとおり定めます。</p>
@@ -33,5 +35,9 @@ const { siteName, author, ads } = siteConfig;
 <h2>プライバシーポリシーの変更</h2>
 <p>本ポリシーの内容は、必要に応じて予告なく変更することがあります。変更後の内容は、このページに掲載した時点から有効となります。</p>
 
-<h2>お問い合わせ</h2>
-<p>本ポリシーに関するお問い合わせは、<a href="/author">作者ページ</a>に掲載している連絡先までお願いします。</p>
+{hasContact && (
+	<>
+		<h2>お問い合わせ</h2>
+		<p>本ポリシーに関するお問い合わせは、<a href="/author">作者ページ</a>に掲載している連絡先までお願いします。</p>
+	</>
+)}
