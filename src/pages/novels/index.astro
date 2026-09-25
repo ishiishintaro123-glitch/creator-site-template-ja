@@ -7,7 +7,7 @@ import { getWorks } from '../../lib/novels';
 
 const works = await getWorks();
 
-const LIST_FEED_INTERVAL = 3;
+const LIST_FEED_INTERVAL = 5;
 ---
 
 <Layout title={t.novelListTitle} description={siteConfig.description} showAuthorLink showGenreNav>
@@ -18,7 +18,7 @@ const LIST_FEED_INTERVAL = 3;
 			works.map((work, index) => (
 				<Fragment>
 					<WorkCard work={work} basePath="/novels" cover={work.cover} />
-					{/* An ad after every 3rd work, but never after the last one. */}
+					{/* An ad after every 5th work, but never after the last one. */}
 					{siteConfig.ads?.listFeed && (index + 1) % LIST_FEED_INTERVAL === 0 && index < works.length - 1 && (
 						<li class="novel-list__ad">
 							<AdSlot code={siteConfig.ads.listFeed} />

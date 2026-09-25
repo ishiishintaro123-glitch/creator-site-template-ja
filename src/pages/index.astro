@@ -23,7 +23,7 @@ const items = [
 	...illustrations.map((illustration) => ({ kind: 'illustration' as const, date: illustration.publishedAt, illustration })),
 ].sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
-const LIST_FEED_INTERVAL = 3;
+const LIST_FEED_INTERVAL = 5;
 ---
 
 <Layout title={t.allWorksTitle} description={siteConfig.description} showAuthorLink showGenreNav>
@@ -40,7 +40,7 @@ const LIST_FEED_INTERVAL = 3;
 					{item.kind === 'illustration' && (
 						<IllustrationCard illustration={item.illustration} genreLabel={t.navIllustrations} />
 					)}
-					{/* An ad after every 3rd work, but never after the last one. */}
+					{/* An ad after every 5th work, but never after the last one. */}
 					{siteConfig.ads?.listFeed && (index + 1) % LIST_FEED_INTERVAL === 0 && index < items.length - 1 && (
 						<li class="work-list__ad">
 							<AdSlot code={siteConfig.ads.listFeed} />

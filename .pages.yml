@@ -298,7 +298,7 @@ content:
             options:
               format: html
           - name: listFeed
-            label: 作品一覧で、作品3つごとの間
+            label: 作品一覧で、作品5つごとの間
             type: code
             options:
               format: html
