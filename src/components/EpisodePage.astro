@@ -70,12 +70,6 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 	</header>
 	<slot />
 
-	{siteConfig.ads?.afterEpisode && (
-		<div class="episode-ad">
-			<AdSlot code={siteConfig.ads.afterEpisode} />
-		</div>
-	)}
-
 	<nav class="episode-nav" aria-label={t.episodeNavLabel}>
 		{prevEpisode ? (
 			<a href={`${basePath}/${prevEpisode.id}`}>{t.prevEpisode(prevEpisode.number)}</a>
@@ -93,6 +87,13 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 	<a class="share-button" href={shareHref} target="_blank" rel="noopener noreferrer">
 		{t.shareOnX}
 	</a>
+
+	{/* The ad comes last, so reading on and sharing come first. */}
+	{siteConfig.ads?.afterEpisode && (
+		<div class="episode-ad">
+			<AdSlot code={siteConfig.ads.afterEpisode} />
+		</div>
+	)}
 </Layout>
 
 <style>
@@ -112,9 +113,9 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 		font-weight: 600;
 	}
 
-	/* Generous spacing keeps the ad visually separate from the nav buttons below (ad networks prohibit placements that invite accidental clicks). */
+	/* Generous spacing keeps the ad visually separate from the buttons above (ad networks prohibit placements that invite accidental clicks). */
 	.episode-ad {
-		margin: 3rem 0;
+		margin-top: 3rem;
 	}
 
 	.episode-nav {

@@ -283,7 +283,7 @@ content:
               regex: ^(https://.*)?$
               message: https:// から始まるアドレスで書いてください
           - name: afterEpisode
-            label: 各話の本文の下（おすすめ）
+            label: 各話の一番下（おすすめ）
             type: code
             options:
               format: html

@@ -52,7 +52,7 @@ blockAi: false
 #
 # provider: 広告サービス名（プライバシーポリシーに表示されます）
 # providerPrivacyUrl: 広告サービスのプライバシーポリシーのURL（分かれば。https:// から始まるもの）
-# afterEpisode: 各話の本文の下（読み終わった位置。おすすめ）
+# afterEpisode: 各話の一番下（「次の話」とXでシェアするボタンの下。おすすめ）
 # sidebar: PCで見たときの本文の右側の余白（スクロールしても付いてきます。画面の狭いスマホでは表示されません）
 # workToc: 作品の目次の下
 # listFeed: 作品一覧で、作品5つごとの間
