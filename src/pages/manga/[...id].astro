@@ -1,0 +1,71 @@
+---
+import { Image } from 'astro:assets';
+import EpisodePage from '../../components/EpisodePage.astro';
+import { t } from '../../site-config.mjs';
+import { getManga, type Manga, type MangaEpisode } from '../../lib/manga';
+
+export async function getStaticPaths() {
+	const works = await getManga();
+	return works.flatMap((work) =>
+		work.episodes.map((episode, index) => ({
+			params: { id: episode.id },
+			props: {
+				work,
+				episode,
+				prevEpisode: work.episodes[index - 1] ?? null,
+				nextEpisode: work.episodes[index + 1] ?? null,
+			},
+		})),
+	);
+}
+
+const { work, episode, prevEpisode, nextEpisode } = Astro.props as {
+	work: Manga;
+	episode: MangaEpisode;
+	prevEpisode: MangaEpisode | null;
+	nextEpisode: MangaEpisode | null;
+};
+---
+
+<EpisodePage
+	work={work}
+	episode={episode}
+	episodeCount={work.episodes.length}
+	prevEpisode={prevEpisode}
+	nextEpisode={nextEpisode}
+	basePath="/manga"
+	historyKey={`manga/${work.slug}`}
+	backToListLabel={t.backToMangaList}
+	listLabel={t.mangaList}
+	wide
+	image={episode.pages[0]}
+>
+	{/* Pages read top to bottom. The first two load right away; the rest load as the reader scrolls. */}
+	<div class="manga-pages">
+		{episode.pages.map((page, index) => (
+			<Image
+				src={page}
+				alt={t.pageAlt(index + 1)}
+				widths={[480, 800, 1200]}
+				sizes="(min-width: 60rem) 60rem, 100vw"
+				loading={index < 2 ? 'eager' : 'lazy'}
+			/>
+		))}
+	</div>
+</EpisodePage>
+
+<style>
+	/* Pages sit edge to edge, like a vertical-scroll web comic. */
+	.manga-pages {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	/* Natural size up to the page width: never stretched larger than the uploaded image. */
+	.manga-pages img {
+		display: block;
+		max-width: 100%;
+		height: auto;
+	}
+</style>

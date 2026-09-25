@@ -1,0 +1,13 @@
+// Cloudflare Workers settings. Cloudflare (Workers Builds) runs `npm run build` and then `npx wrangler deploy`,
+// which publishes the built site in dist/ as static files (no server code).
+{
+  "name": "creator-site",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    // /novels opens /novels/ (Astro writes each page as <path>/index.html).
+    "html_handling": "auto-trailing-slash",
+    // Addresses with no page get dist/404.html (src/pages/404.astro) with a 404 status.
+    "not_found_handling": "404-page"
+  }
+}

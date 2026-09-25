@@ -1,0 +1,58 @@
+---
+import EpisodePage from '../../components/EpisodePage.astro';
+import { t } from '../../site-config.mjs';
+import { getWorks, type Episode, type Work } from '../../lib/novels';
+
+export async function getStaticPaths() {
+	const works = await getWorks();
+	return works.flatMap((work) =>
+		work.episodes.map((episode, index) => ({
+			params: { id: episode.id },
+			props: {
+				work,
+				episode,
+				prevEpisode: work.episodes[index - 1] ?? null,
+				nextEpisode: work.episodes[index + 1] ?? null,
+			},
+		})),
+	);
+}
+
+const { work, episode, prevEpisode, nextEpisode } = Astro.props as {
+	work: Work;
+	episode: Episode;
+	prevEpisode: Episode | null;
+	nextEpisode: Episode | null;
+};
+---
+
+<EpisodePage
+	work={work}
+	episode={episode}
+	episodeCount={work.episodes.length}
+	prevEpisode={prevEpisode}
+	nextEpisode={nextEpisode}
+	basePath="/novels"
+	historyKey={work.slug}
+	backToListLabel={t.backToNovelList}
+	listLabel={t.novelList}
+	readingControls
+	image={work.cover}
+>
+	<article class="prose">
+		<Fragment set:html={episode.html} />
+	</article>
+</EpisodePage>
+
+<style>
+	.prose {
+		font-family: var(--prose-font-family);
+		font-size: var(--prose-font-size);
+		line-height: var(--prose-line-height);
+		letter-spacing: 0.01em;
+	}
+
+	.prose :global(p) {
+		margin: 0 0 1.4em;
+	}
+</style>

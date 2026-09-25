@@ -1,0 +1,80 @@
+---
+import { Image } from 'astro:assets';
+import { t } from '../site-config.mjs';
+import type { Illustration } from '../lib/illustrations';
+
+// One illustration in a gallery grid: a square thumbnail, and the title when there is one.
+interface Props {
+	illustration: Illustration;
+}
+
+const { illustration } = Astro.props;
+const imageCount = illustration.images.length;
+---
+
+<li class="tile">
+	<a href={`/illustrations/${illustration.slug}`} class="tile__link">
+		<Image
+			src={illustration.images[0]}
+			alt={illustration.title || illustration.description || t.illustrationAlt}
+			widths={[240, 480, 720]}
+			sizes="(min-width: 60rem) 20rem, 50vw"
+			class="tile__image"
+		/>
+		{imageCount > 1 && <span class="tile__count">{t.imageCount(imageCount)}</span>}
+		{illustration.title && <span class="tile__title">{illustration.title}</span>}
+	</a>
+</li>
+
+<style>
+	.tile__link {
+		position: relative;
+		display: block;
+		color: var(--accent);
+	}
+
+	.tile__link:hover {
+		text-decoration: none;
+	}
+
+	.tile__image {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1;
+		object-fit: cover;
+		border-radius: 0.4rem;
+		background: var(--bg-elevated);
+	}
+
+	.tile__link:hover .tile__title {
+		text-decoration: underline;
+	}
+
+	.tile__link:hover .tile__image {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+
+	.tile__count {
+		position: absolute;
+		top: 0.4rem;
+		right: 0.4rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: #fff;
+		background: rgba(0, 0, 0, 0.6);
+		border-radius: 999px;
+		padding: 0.1rem 0.5rem;
+	}
+
+	.tile__title {
+		display: block;
+		margin-top: 0.4rem;
+		font-size: 0.85rem;
+		font-weight: 600;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+</style>

@@ -1,0 +1,144 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { siteConfig, t } from '../../site-config.mjs';
+import { getIllustrations, type Illustration } from '../../lib/illustrations';
+
+export async function getStaticPaths() {
+	const illustrations = await getIllustrations();
+	return illustrations.map((illustration) => ({ params: { slug: illustration.slug }, props: { illustration } }));
+}
+
+const { illustration } = Astro.props as { illustration: Illustration };
+const dateFormatter = new Intl.DateTimeFormat(t.dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
+const alt = illustration.title || illustration.description || t.illustrationAlt;
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const shareParams = new URLSearchParams({ text: illustration.label, url: pageUrl });
+if (siteConfig.xAccount) shareParams.set('via', siteConfig.xAccount);
+const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
+---
+
+<Layout
+	title={illustration.label}
+	description={illustration.description || undefined}
+	wide
+	image={illustration.images[0]}
+	back={{ href: '/illustrations', label: t.backToIllustrationList, toList: true }}
+>
+	<div class="images">
+		{illustration.images.map((image, index) => (
+			<Image
+				src={image}
+				alt={alt}
+				widths={[480, 800, 1200, 1600]}
+				sizes="(min-width: 60rem) 60rem, 100vw"
+				loading={index === 0 ? 'eager' : 'lazy'}
+			/>
+		))}
+	</div>
+
+	<div class="info">
+		{illustration.title && <h1 class="info__title">{illustration.title}</h1>}
+		<p class="info__date">{dateFormatter.format(illustration.publishedAt)}</p>
+		{illustration.description && <p class="info__description">{illustration.description}</p>}
+		{illustration.tags.length > 0 && (
+			<ul class="info__tags">
+				{illustration.tags.map((tag) => (
+					<li>{tag}</li>
+				))}
+			</ul>
+		)}
+	</div>
+
+	{siteConfig.ads?.afterEpisode && (
+		<div class="illustration-ad">
+			<AdSlot code={siteConfig.ads.afterEpisode} />
+		</div>
+	)}
+
+	<a class="share-button" href={shareHref} target="_blank" rel="noopener noreferrer">
+		{t.shareOnX}
+	</a>
+</Layout>
+
+<style>
+	.images {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.images img {
+		display: block;
+		max-width: 100%;
+		height: auto;
+		/* Keep the whole picture on screen instead of cropping tall images. */
+		max-height: 90vh;
+		object-fit: contain;
+	}
+
+	.info {
+		max-width: 42rem;
+		margin: 1.5rem auto 0;
+	}
+
+	.info__title {
+		font-size: 1.3rem;
+		margin: 0 0 0.3rem;
+	}
+
+	.info__date {
+		margin: 0;
+		font-size: 0.85rem;
+		color: var(--text-muted);
+	}
+
+	.info__description {
+		margin: 1rem 0 0;
+		line-height: 1.8;
+		white-space: pre-line;
+		overflow-wrap: anywhere;
+	}
+
+	.info__tags {
+		list-style: none;
+		margin: 1rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.info__tags li {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 0.15rem 0.6rem;
+	}
+
+	.illustration-ad {
+		max-width: 42rem;
+		margin: 3rem auto;
+	}
+
+	.share-button {
+		display: block;
+		width: fit-content;
+		margin: 1.5rem auto 0;
+		padding: 0.65rem 1.25rem;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--accent);
+	}
+
+	.share-button:hover {
+		text-decoration: none;
+		border-color: var(--accent);
+	}
+</style>

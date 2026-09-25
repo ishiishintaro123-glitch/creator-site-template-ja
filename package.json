@@ -1,0 +1,26 @@
+{
+  "name": "creator-site",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "import": "node scripts/import-manuscripts.mjs"
+  },
+  "dependencies": {
+    "@astrojs/markdown-satteri": "^0.4.1",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.1",
+    "js-yaml": "^4.3.2",
+    "satteri": "^0.10.5",
+    "sharp": "^0.35.4"
+  },
+  "allowScripts": {
+    "esbuild": true
+  }
+}

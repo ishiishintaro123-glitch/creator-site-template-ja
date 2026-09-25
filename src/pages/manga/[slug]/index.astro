@@ -1,0 +1,21 @@
+---
+import WorkTocPage from '../../../components/WorkTocPage.astro';
+import { t } from '../../../site-config.mjs';
+import { getManga, type Manga } from '../../../lib/manga';
+
+export async function getStaticPaths() {
+	const works = await getManga();
+	return works.map((work) => ({ params: { slug: work.slug }, props: { work } }));
+}
+
+const { work } = Astro.props as { work: Manga };
+---
+
+<WorkTocPage
+	work={work}
+	basePath="/manga"
+	historyKey={`manga/${work.slug}`}
+	backHref="/manga"
+	backLabel={t.backToMangaList}
+	cover={work.cover}
+/>

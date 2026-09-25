@@ -1,0 +1,55 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { siteConfig, t } from '../../site-config.mjs';
+import { getManga } from '../../lib/manga';
+
+import { redirectTo } from '../../lib/redirect';
+
+const works = await getManga();
+// No manga on this site: send visitors to the top page instead of an empty list.
+if (works.length === 0) return redirectTo('/');
+
+const LIST_FEED_INTERVAL = 3;
+---
+
+<Layout title={t.mangaListTitle} description={siteConfig.description} showAuthorLink showGenreNav>
+	<div hidden data-list-page="/manga"></div>
+	<h1 class="page-title">{t.navManga}</h1>
+	<ul class="work-list">
+		{
+			works.map((work, index) => (
+				<Fragment>
+					<WorkCard work={work} basePath="/manga" cover={work.cover} />
+					{/* An ad after every 3rd work, but never after the last one. */}
+					{siteConfig.ads?.listFeed && (index + 1) % LIST_FEED_INTERVAL === 0 && index < works.length - 1 && (
+						<li class="work-list__ad">
+							<AdSlot code={siteConfig.ads.listFeed} />
+						</li>
+					)}
+				</Fragment>
+			))
+		}
+	</ul>
+</Layout>
+
+<style>
+	.page-title {
+		font-size: 1.4rem;
+		margin: 0 0 1.25rem;
+	}
+
+	.work-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.work-list__ad {
+		padding: 0.5rem 0;
+	}
+</style>

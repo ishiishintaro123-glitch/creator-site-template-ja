@@ -1,0 +1,307 @@
+# Pages CMS（https://app.pagescms.org）でブラウザから編集するための設定
+# 各項目のルールは src/content.config.ts と src/site-config.mjs の検証内容に合わせています
+
+# 「Configuration」メニューを隠す（画面から.pages.ymlを書き換えて編集画面を壊す誤操作を防ぐため。GitHubからは編集可能）
+settings:
+  config: false
+
+# 原稿ファイルの取り込み用のアップロード先（作品の「原稿をまとめて取り込む」欄で使う）
+media:
+  - name: import
+    label: 原稿の一時置き場
+    input: src/content/import
+    output: src/content/import
+    extensions: [md, txt]
+    rename: false
+  # 漫画のページ・表紙とイラストの画像のアップロード先。同じ名前のファイルがぶつからないよう、名前は自動で付け直す
+  - name: images
+    label: 画像
+    input: src/content/media
+    output: src/content/media
+    extensions: [png, jpg, jpeg, webp]
+    rename: random
+
+content:
+  - name: works
+    label: 小説
+    type: collection
+    path: src/content/novels
+    format: yaml
+    subfolders: false
+    filename:
+      template: "{year}{month}{day}-{hour}{minute}{second}.yaml"
+      field: create
+    view:
+      primary: title
+      fields: [title]
+    fields:
+      - name: title
+        label: 作品名
+        description: 1作品は約30万字までです。超えそうになったら「第2部」として新しい作品を作ってください。
+        type: string
+        pattern:
+          regex: '\S'
+          message: 作品名を入力してください
+      - name: synopsis
+        label: あらすじ
+        type: text
+        pattern:
+          regex: '\S'
+          message: あらすじを入力してください
+      - name: cover
+        label: 表紙の画像（任意）
+        description: >-
+          作品一覧と目次に表示されます。この作品のリンクがXやLINEなどに貼られたときの画像にもなります。縦長（3:4）がおすすめです。
+          空欄なら表紙なしで表示され、リンクが貼られたときはサイト設定の「リンクが貼られたときの画像」が使われます。
+        type: file
+        options:
+          media: images
+          path: novels
+      - name: episodes
+        label: 目次（一番下の「Add an item」で次の話を追加）
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "第{index}話 {fields.title}"
+        fields:
+          - name: title
+            label: 話のタイトル（任意）
+            type: string
+          - name: publishedAt
+            label: 公開日
+            type: date
+          - name: body
+            label: 本文（改行はそのまま表示されます。空行を入れると段落の区切りになります）
+            type: text
+            pattern:
+              regex: '\S'
+              message: 本文を入力してください
+      - name: import
+        label: 原稿をまとめて取り込む（.md / .txt）
+        description: >-
+          【今はファイルを1つずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1つしか残りません（修正待ち）。
+          選んだファイルは、ファイル名の番号順（第1話、第2話…第10話）に目次の最後へ追加されます。
+          原稿の1行目が「# タイトル」なら話のタイトルになります。公開日は取り込んだ日になります。あとから各話の公開日の欄で変えられます。
+          保存してから1〜2分で目次に入り、そのあとは本文を直接直せます。取り込みが終わるまで、この作品は編集しないでください。
+        type: file
+        options:
+          media: import
+          multiple: true
+          extensions: [md, txt]
+      - name: tags
+        label: タグ（「Add an item」でタグを追加）
+        type: string
+        list: true
+
+  - name: manga
+    label: 漫画
+    type: collection
+    path: src/content/manga
+    format: yaml
+    subfolders: false
+    filename:
+      template: "{year}{month}{day}-{hour}{minute}{second}.yaml"
+      field: create
+    view:
+      primary: title
+      fields: [title]
+    fields:
+      - name: title
+        label: 作品名
+        type: string
+        pattern:
+          regex: '\S'
+          message: 作品名を入力してください
+      - name: synopsis
+        label: あらすじ
+        type: text
+      - name: cover
+        label: 表紙の画像
+        description: この作品のリンクがXやLINEなどに貼られたときの画像にもなります。空欄なら第1話の1ページ目が表紙になります。
+        type: file
+        options:
+          media: images
+          path: manga
+      - name: episodes
+        label: 目次（一番下の「Add an item」を押すと新しい話が増えます。ページの追加ではありません）
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "第{index}話 {fields.title}"
+        fields:
+          - name: title
+            label: 話のタイトル（任意）
+            type: string
+          - name: publishedAt
+            label: 公開日
+            type: date
+          - name: pages
+            label: この話のページ（一番上が1ページ目です。「Upload」で1枚ずつ追加すると、アップロードした順に下へ並びます。2ページ目以降も、この「Upload」で追加します）
+            description: >-
+              【今は画像を1枚ずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1枚しか残りません（修正待ち）。
+              並び順は左のつまみで入れ替えられます。PNG・JPEG・WebP、1枚4.5MBまで。
+            type: file
+            options:
+              media: images
+              path: manga
+              multiple: true
+      - name: tags
+        label: タグ（「Add an item」でタグを追加）
+        type: string
+        list: true
+
+  - name: illustrations
+    label: イラスト
+    type: collection
+    path: src/content/illustrations
+    format: yaml
+    subfolders: false
+    filename:
+      template: "{year}{month}{day}-{hour}{minute}{second}.yaml"
+      field: create
+    view:
+      primary: title
+      fields: [title, publishedAt]
+      default:
+        sort: publishedAt
+        order: desc
+    fields:
+      - name: images
+        label: 画像
+        description: >-
+          【今は画像を1枚ずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1枚しか残りません（修正待ち）。
+          PNG・JPEG・WebP、1枚4.5MBまで。
+        type: file
+        options:
+          media: images
+          path: illustrations
+          multiple: true
+      - name: title
+        label: タイトル（任意）
+        type: string
+      - name: description
+        label: 説明（任意）
+        type: text
+      - name: publishedAt
+        label: 公開日
+        type: date
+      - name: tags
+        label: タグ（「Add an item」でタグを追加）
+        type: string
+        list: true
+
+  - name: site
+    label: サイト設定
+    type: file
+    path: site.config.yaml
+    format: yaml
+    fields:
+      - name: author
+        label: 作者名
+        description: トップページ左上の作者ページへのリンク、作者ページの見出し、各ページ下の著作権表示（© 年 作者名）に表示されます。
+        type: string
+        pattern:
+          regex: '\S'
+          message: 作者名を入力してください
+      - name: profile
+        label: 自己紹介（作者ページに表示）
+        type: text
+      - name: links
+        label: 作者ページにリンクを追加
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: 表示名
+            type: string
+            pattern:
+              regex: '\S'
+              message: 表示名を入力してください
+          - name: url
+            label: リンク先
+            type: string
+            pattern:
+              regex: ^https://
+              message: https:// から始まるアドレスで書いてください
+      - name: xAccount
+        label: XのユーザーID（@なし）
+        description: 入れると、読者が作品をXでシェアしたときにあなたに通知が届きます。作者ページにもXへのリンクが付きます。使わなければ空欄のままで大丈夫です。
+        type: string
+        pattern:
+          regex: ^@?[A-Za-z0-9_]{0,15}$
+          message: 半角英数字とアンダースコア15文字以内で書いてください
+      - name: siteName
+        label: サイト名
+        description: ブラウザのタブや検索結果、リンクがXやLINEなどに貼られたときに表示されます。
+        type: string
+        pattern:
+          regex: '\S'
+          message: サイト名を入力してください
+      - name: description
+        label: サイトの説明文
+        description: 検索結果や、トップページのリンクがXやLINEなどに貼られたときに、サイトの紹介文として表示されます。
+        type: text
+        pattern:
+          regex: '\S'
+          message: サイトの説明文を入力してください
+      - name: shareImage
+        label: リンクが貼られたときの画像
+        description: >-
+          このサイトのページのリンクがXやLINEなどに貼られたときに、大きく表示される画像です（サイト共通の1枚）。
+          横長の1200×630ピクセルがおすすめです（縦長の画像は、ぼかした背景の中央に全体が収まるよう自動で並べ直されます）。PNG・JPEG・WebP、4.5MBまで。
+          表紙のある小説や、漫画・イラストのページでは、その作品の画像が優先されます。空欄なら画像なしの小さな表示になります。
+        type: file
+        options:
+          media: images
+          path: site
+      - name: url
+        label: サイトのURL
+        description: このサイトのアドレスです。Xでシェアされるリンクや、検索エンジンに伝えるアドレスに使われます。独自ドメインがなければ、Cloudflareで発行された ○○.workers.dev のアドレスを入れてください。
+        type: string
+        pattern:
+          regex: ^https?://
+          message: https:// から始まるアドレスで書いてください
+      - name: blockAi
+        label: AIによる読み取りを断る
+        description: >-
+          オンにすると、ChatGPT・Claude・Geminiなどを運営する会社の読み取りプログラムに、このサイトを読まないよう求めます。AI向けの作品の案内（llms.txt）も作らなくなります。
+          GoogleやBingなどの検索結果には、これまでどおり表示されます。読まないよう「求める」だけで、従うかどうかは各社しだいです。
+        type: boolean
+      - name: ads
+        label: 広告（広告サービスで発行されたコードを、表示したい場所の欄に貼る）
+        type: object
+        fields:
+          - name: provider
+            label: 広告サービス名（プライバシーポリシーに表示）
+            type: string
+          - name: providerPrivacyUrl
+            label: 広告サービスのプライバシーポリシーのURL
+            type: string
+            pattern:
+              regex: ^(https://.*)?$
+              message: https:// から始まるアドレスで書いてください
+          - name: afterEpisode
+            label: 各話の本文の下（おすすめ）
+            type: code
+            options:
+              format: html
+          - name: sidebar
+            label: PCで見たときの本文の右側の余白
+            type: code
+            options:
+              format: html
+          - name: workToc
+            label: 作品の目次の下
+            type: code
+            options:
+              format: html
+          - name: listFeed
+            label: 作品一覧で、作品3つごとの間
+            type: code
+            options:
+              format: html
+          - name: adsTxt
+            label: ads.txt の内容（広告サービスから求められた場合のみ）
+            type: text

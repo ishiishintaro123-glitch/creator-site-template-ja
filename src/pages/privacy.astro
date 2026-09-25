@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PrivacyEn from '../components/privacy/PrivacyEn.astro';
+import PrivacyJa from '../components/privacy/PrivacyJa.astro';
+import { siteConfig, t } from '../site-config.mjs';
+---
+
+<Layout title={t.privacyPolicy} description={t.privacyDescription(siteConfig.siteName)} back={{ href: '/', label: t.backToTop }}>
+	<h1 class="policy-title">{t.privacyPolicy}</h1>
+	<div class="policy">
+		{siteConfig.language === 'en' ? <PrivacyEn /> : <PrivacyJa />}
+	</div>
+</Layout>
+
+<style>
+	.policy-title {
+		font-size: 1.5rem;
+		margin: 0 0 1.25rem;
+	}
+
+	.policy {
+		line-height: 1.8;
+	}
+
+	.policy :global(h2) {
+		font-size: 1.05rem;
+		margin: 2rem 0 0.5rem;
+	}
+
+	.policy :global(p) {
+		margin: 0 0 0.9em;
+	}
+</style>

@@ -1,0 +1,171 @@
+---
+import type { ImageMetadata } from 'astro';
+import Layout from '../layouts/Layout.astro';
+import AdSlot from './AdSlot.astro';
+import { siteConfig, t } from '../site-config.mjs';
+
+// The frame around one episode (header, ad, previous/next links, share button); the episode's content goes in the slot.
+// Shared by novels and manga.
+interface EpisodeLink {
+	id: string;
+	number: number;
+}
+
+interface Props {
+	work: { slug: string; title: string; synopsis: string };
+	episode: EpisodeLink & { title: string };
+	episodeCount: number;
+	prevEpisode: EpisodeLink | null;
+	nextEpisode: EpisodeLink | null;
+	basePath: '/novels' | '/manga';
+	historyKey: string;
+	/** Link text back to the genre's list, used when the work has a single episode (and so no table of contents). */
+	backToListLabel: string;
+	listLabel: string;
+	readingControls?: boolean;
+	wide?: boolean;
+	image?: ImageMetadata;
+}
+
+const {
+	work,
+	episode,
+	episodeCount,
+	prevEpisode,
+	nextEpisode,
+	basePath,
+	historyKey,
+	backToListLabel,
+	listLabel,
+	readingControls = false,
+	wide = false,
+	image,
+} = Astro.props;
+
+const episodeLabel = t.episodeLabel(episode.number, episode.title);
+const pageTitle = t.episodePageTitle(work.title, episodeLabel);
+const shareText = `${work.title} ${episodeLabel}`;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const shareParams = new URLSearchParams({ text: shareText, url: pageUrl });
+if (siteConfig.xAccount) shareParams.set('via', siteConfig.xAccount);
+const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
+---
+
+<Layout
+	title={pageTitle}
+	description={work.synopsis || undefined}
+	readingControls={readingControls}
+	wide={wide}
+	image={image}
+	back={
+		episodeCount > 1
+			? { href: `${basePath}/${work.slug}`, label: t.backToToc }
+			: { href: basePath, label: backToListLabel, toList: true }
+	}
+>
+	<div hidden data-episode-marker data-work-slug={historyKey} data-episode={episode.number}></div>
+	<header class="episode-header">
+		<h1 class="episode-header__title">{work.title}</h1>
+		<p class="episode-header__episode">{episodeLabel}</p>
+	</header>
+	<slot />
+
+	{siteConfig.ads?.afterEpisode && (
+		<div class="episode-ad">
+			<AdSlot code={siteConfig.ads.afterEpisode} />
+		</div>
+	)}
+
+	<nav class="episode-nav" aria-label={t.episodeNavLabel}>
+		{prevEpisode ? (
+			<a href={`${basePath}/${prevEpisode.id}`}>{t.prevEpisode(prevEpisode.number)}</a>
+		) : (
+			<span />
+		)}
+		{episodeCount > 1 ? (
+			<a href={`${basePath}/${work.slug}`} class="episode-nav__toc">{t.toc}</a>
+		) : (
+			<a href={basePath} class="episode-nav__toc" data-back-to-list data-label-all={t.allWorksList}>{listLabel}</a>
+		)}
+		{nextEpisode ? <a href={`${basePath}/${nextEpisode.id}`}>{t.nextEpisode(nextEpisode.number)}</a> : <span />}
+	</nav>
+
+	<a class="share-button" href={shareHref} target="_blank" rel="noopener noreferrer">
+		{t.shareOnX}
+	</a>
+</Layout>
+
+<style>
+	.episode-header {
+		margin-bottom: 2rem;
+	}
+
+	.episode-header__title {
+		font-size: 1.5rem;
+		margin: 0 0 0.35rem;
+	}
+
+	.episode-header__episode {
+		margin: 0;
+		color: var(--text-muted);
+		font-size: 0.9rem;
+		font-weight: 600;
+	}
+
+	/* Generous spacing keeps the ad visually separate from the nav buttons below (ad networks prohibit placements that invite accidental clicks). */
+	.episode-ad {
+		margin: 3rem 0;
+	}
+
+	.episode-nav {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		align-items: center;
+		gap: 1rem;
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.episode-nav a {
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--accent);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 0.5rem 1.1rem;
+	}
+
+	.episode-nav > :first-child {
+		justify-self: start;
+	}
+
+	.episode-nav > :last-child {
+		justify-self: end;
+	}
+
+	.episode-nav a {
+		white-space: nowrap;
+	}
+
+	.episode-nav a:hover {
+		text-decoration: none;
+		border-color: var(--accent);
+	}
+
+	.share-button {
+		display: inline-block;
+		margin-top: 1.5rem;
+		padding: 0.65rem 1.25rem;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--accent);
+	}
+
+	.share-button:hover {
+		text-decoration: none;
+		border-color: var(--accent);
+	}
+</style>

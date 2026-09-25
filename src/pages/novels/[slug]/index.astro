@@ -1,0 +1,14 @@
+---
+import WorkTocPage from '../../../components/WorkTocPage.astro';
+import { t } from '../../../site-config.mjs';
+import { getWorks, type Work } from '../../../lib/novels';
+
+export async function getStaticPaths() {
+	const works = await getWorks();
+	return works.map((work) => ({ params: { slug: work.slug }, props: { work } }));
+}
+
+const { work } = Astro.props as { work: Work };
+---
+
+<WorkTocPage work={work} basePath="/novels" historyKey={work.slug} backHref="/novels" backLabel={t.backToNovelList} cover={work.cover} />

@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteConfig, t } from '../site-config.mjs';
+
+const links = [
+	...(siteConfig.xAccount ? [{ label: 'X', url: `https://x.com/${siteConfig.xAccount}` }] : []),
+	...siteConfig.links,
+];
+---
+
+<Layout title={siteConfig.author} description={siteConfig.profile || siteConfig.description} back={{ href: '/', label: t.backToTop }}>
+	<h1 class="author-name">{siteConfig.author}</h1>
+	{siteConfig.profile && <p class="author-profile">{siteConfig.profile}</p>}
+	{links.length > 0 && (
+		<ul class="author-links">
+			{links.map((link) => (
+				<li>
+					<a href={link.url} target="_blank" rel="noopener noreferrer">
+						{link.label}
+					</a>
+				</li>
+			))}
+		</ul>
+	)}
+</Layout>
+
+<style>
+	.author-name {
+		font-size: 1.5rem;
+		margin: 0 0 1rem;
+	}
+
+	.author-profile {
+		margin: 0;
+		line-height: 1.8;
+		white-space: pre-line;
+		overflow-wrap: anywhere;
+	}
+
+	.author-links {
+		list-style: none;
+		margin: 1.75rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+	}
+
+	.author-links a {
+		display: inline-block;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--accent);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 0.5rem 1.2rem;
+	}
+
+	.author-links a:hover {
+		text-decoration: none;
+		border-color: var(--accent);
+	}
+</style>

@@ -1,0 +1,206 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import AdSlot from './AdSlot.astro';
+import { siteConfig, t } from '../site-config.mjs';
+
+// A work's page with its table of contents; shared by novels and manga.
+interface Props {
+	work: {
+		slug: string;
+		title: string;
+		synopsis: string;
+		tags: string[];
+		episodes: { id: string; number: number; title: string; publishedAt: Date }[];
+	};
+	basePath: '/novels' | '/manga';
+	historyKey: string;
+	backHref: string;
+	backLabel: string;
+	cover?: ImageMetadata;
+}
+
+const { work, basePath, historyKey, backHref, backLabel, cover } = Astro.props;
+const { slug, episodes } = work;
+const dateFormatter = new Intl.DateTimeFormat(t.dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Layout title={work.title} description={work.synopsis || undefined} image={cover} back={{ href: backHref, label: backLabel, toList: true }}>
+	<header class:list={['work-header', { 'work-header--with-cover': cover }]}>
+		{cover && <Image src={cover} alt="" class="work-header__cover" widths={[240, 480]} sizes="240px" />}
+		<h1 class="work-header__title">{work.title}</h1>
+		{work.synopsis && <p class="work-header__synopsis">{work.synopsis}</p>}
+		{work.tags.length > 0 && (
+			<ul class="work-header__tags">
+				{work.tags.map((tag) => (
+					<li>{tag}</li>
+				))}
+			</ul>
+		)}
+	</header>
+
+	<div class="continue-row" data-work-slug={historyKey} data-episode-count={episodes.length} data-base-href={`${basePath}/${slug}`}>
+		<a
+			class="primary-link"
+			data-continue-link
+			data-label-continue={t.continueReadingTemplate}
+			data-label-read-again={t.readAgainTemplate}
+			href={`${basePath}/${episodes[0].id}`}
+		>
+			{t.startReading}
+		</a>
+	</div>
+
+	<h2 class="toc-heading">{t.toc}</h2>
+	<ol class="episode-list">
+		{episodes.map((episode) => (
+			<li>
+				<a
+					class="episode-list__row"
+					href={`${basePath}/${episode.id}`}
+					data-work-slug={historyKey}
+					data-toc-episode={episode.number}
+				>
+					<span class="episode-list__label">
+						{t.episodeNumber(episode.number)}{episode.title && <span class="episode-list__title">{episode.title}</span>}
+					</span>
+					<span class="episode-list__date">{dateFormatter.format(episode.publishedAt)}</span>
+				</a>
+			</li>
+		))}
+	</ol>
+
+	{siteConfig.ads?.workToc && (
+		<div class="toc-ad">
+			<AdSlot code={siteConfig.ads.workToc} />
+		</div>
+	)}
+</Layout>
+
+<style>
+	.work-header--with-cover {
+		display: grid;
+		grid-template-columns: 8rem minmax(0, 1fr);
+		column-gap: 1.25rem;
+		align-items: start;
+	}
+
+	.work-header--with-cover > :not(.work-header__cover) {
+		grid-column: 2;
+	}
+
+	.work-header__cover {
+		grid-row: span 3;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 3 / 4;
+		object-fit: cover;
+		border-radius: 0.3rem;
+	}
+
+	.work-header__title {
+		font-size: 1.5rem;
+		margin: 0 0 0.6rem;
+	}
+
+	.work-header__synopsis {
+		margin: 0;
+		color: var(--text-muted);
+		line-height: 1.7;
+	}
+
+	.work-header__tags {
+		list-style: none;
+		margin: 0.75rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.work-header__tags li {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 0.15rem 0.6rem;
+	}
+
+	.continue-row {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.primary-link {
+		display: inline-block;
+		margin-top: 0.75rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--accent);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 0.55rem 1.3rem;
+	}
+
+	.primary-link:hover {
+		text-decoration: none;
+		border-color: var(--accent);
+	}
+
+	.toc-heading {
+		margin: 2.5rem 0 0.75rem;
+		font-size: 1.05rem;
+		border-top: 1px solid var(--border);
+		padding-top: 1.5rem;
+	}
+
+	.episode-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.episode-list__row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		border: 1px solid var(--border);
+		border-radius: 0.4rem;
+		padding: 0.6rem 0.9rem;
+		color: var(--accent);
+	}
+
+	.episode-list__row:hover {
+		text-decoration: none;
+		border-color: var(--accent);
+	}
+
+	.episode-list__row.is-read {
+		color: var(--text-muted);
+		opacity: 0.6;
+	}
+
+	.episode-list__label {
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+
+	.episode-list__title {
+		margin-left: 0.75em;
+	}
+
+	.episode-list__date {
+		flex-shrink: 0;
+		margin-left: 1rem;
+		font-size: 0.8rem;
+		color: var(--text-muted);
+	}
+
+	.toc-ad {
+		margin-top: 2.5rem;
+	}
+</style>

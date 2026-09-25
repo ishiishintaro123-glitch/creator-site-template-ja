@@ -1,0 +1,40 @@
+---
+import { siteConfig } from '../../site-config.mjs';
+
+const { siteName, author, ads } = siteConfig;
+---
+
+<p>{siteName} ("this site") is a personal site where {author} publishes their own works. This policy explains how information about visitors is handled.</p>
+
+<h2>Information this site collects</h2>
+<p>This site has no accounts, comments, contact forms, or any other feature where visitors enter personal information.</p>
+<p>Display preferences (such as text size and color theme) and reading history (which chapters you have opened) are stored only in your own browser's local storage. They are never sent to this site or to any third party, and you can delete them at any time from your browser settings.</p>
+
+<h2>Access logs</h2>
+<p>This site is delivered through Cloudflare, Inc. To deliver pages and protect the site, Cloudflare may process information such as your IP address and browser type. See the <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare Privacy Policy</a> for details.</p>
+
+{ads && (
+	<>
+		<h2>Advertising</h2>
+		<p>This site uses a third-party advertising service, "{ads.provider}".</p>
+		<p>Advertising providers may use cookies and similar technologies to collect information about your visits to this and other websites in order to show ads that match your interests. This does not include information that directly identifies you, such as your name, address, email address, or phone number.</p>
+		{ads.providerPrivacyUrl ? (
+			<p>For how this information is handled and how to disable cookies, see the <a href={ads.providerPrivacyUrl} target="_blank" rel="noopener noreferrer">{ads.provider} privacy policy</a>.</p>
+		) : (
+			<p>For how this information is handled and how to disable cookies, see the {ads.provider} privacy policy.</p>
+		)}
+		<p>You can disable cookies in your browser settings. You can also opt out of third-party cookies used for personalized advertising at <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a> or, in the EU and UK, <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer">www.youronlinechoices.eu</a>.</p>
+	</>
+)}
+
+<h2>Your rights</h2>
+<p>Depending on where you live (for example, under the EU and UK GDPR or the California Consumer Privacy Act), you may have the right to access, correct, or delete personal information about you, or to object to its use. This site itself does not store personal information about visitors; for information held by the services named above, please contact those services directly.</p>
+
+<h2>Links to other sites</h2>
+<p>Information on external sites linked from this site (such as social media or online stores) is handled according to each site's own privacy policy.</p>
+
+<h2>Changes to this policy</h2>
+<p>This policy may be updated without notice when necessary. Changes take effect when they are posted on this page.</p>
+
+<h2>Contact</h2>
+<p>For questions about this policy, please use the contact details on the <a href="/author">author page</a>.</p>

@@ -1,0 +1,38 @@
+# Cloudflare builds and deploys the site (Workers Builds) and reports each build to GitHub as a check run.
+# When one fails, open (or comment on) an issue so the creator gets a notification: a failed build leaves the
+# site as it was, and that went unnoticed for ~2 weeks in Sept 2026 when deploys failed.
+name: Report failed Cloudflare builds
+
+on:
+  check_run:
+    types: [completed]
+
+jobs:
+  report:
+    # Check runs from GitHub Actions itself are reported by the workflows that fail (content.yml).
+    if: >-
+      github.event.check_run.app.slug != 'github-actions' &&
+      contains(fromJSON('["failure", "timed_out"]'), github.event.check_run.conclusion)
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open or comment on an issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          CHECK_NAME: ${{ github.event.check_run.name }}
+          DETAILS_URL: ${{ github.event.check_run.details_url }}
+          COMMIT_SHA: ${{ github.event.check_run.head_sha }}
+        run: |
+          body="Cloudflareでのビルドに失敗しました（${CHECK_NAME}）。サイトは前の状態のままで、この変更は反映されていません。
+
+          - ビルドのログ: ${DETAILS_URL}
+          - コミット: ${COMMIT_SHA}"
+          gh label create deploy-failure --color B60205 --description "サイトへの反映の失敗" --force
+          existing=$(gh issue list --label deploy-failure --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "サイトへの反映に失敗" --label deploy-failure --body "$body"
+          fi

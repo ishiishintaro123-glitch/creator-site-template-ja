@@ -1,0 +1,111 @@
+# Cloudflare (Workers Builds) builds and deploys the site on every push to main, using wrangler.jsonc.
+# This workflow does what Cloudflare's build can't: write to the repository and open issues.
+name: Import manuscripts and report unused images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      simulate_failure:
+        description: 失敗通知のテスト用（途中で失敗させる）
+        type: boolean
+        default: false
+
+# Run one at a time, so a manuscript import is never pushed while another run is importing.
+concurrency:
+  group: content
+  cancel-in-progress: false
+
+# Actions are pinned to commit SHAs so a moved or hijacked tag can't swap their code (this job can push to the
+# repository).
+jobs:
+  content:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Commit manuscripts imported from Pages CMS back to the repository.
+      issues: write
+    steps:
+      - name: Simulate failure
+        if: inputs.simulate_failure
+        run: exit 1
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # Full history so the import commit can be rebased onto newer commits before pushing.
+          # Don't leave the write-capable token in .git/config, where npm packages and later steps could read it.
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      # Manuscript files uploaded in Pages CMS become episodes (scripts/import-manuscripts.mjs).
+      - name: Import uploaded manuscripts
+        run: npm run import
+
+      # Push the imported episodes back so Pages CMS shows them for editing; the push makes Cloudflare build the
+      # site again with them. Pushes made with the workflow's token don't start another workflow run, so this
+      # doesn't loop.
+      - name: Save imported manuscripts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -z "$(git status --porcelain src/content)" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/content
+          git commit -m "Import manuscripts uploaded in Pages CMS"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+          git pull --rebase "$remote" main
+          git push "$remote" HEAD:main
+
+      # Images no work or setting uses any more (scripts/find-unused-images.mjs), listed in one issue that is
+      # rewritten on every run: opening it notifies the creator once, edits don't. Never fails the run.
+      - name: Report unused images
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          result=$(node scripts/find-unused-images.mjs)
+          count=$(jq -r .count <<<"$result")
+          existing=$(gh issue list --label unused-images --state open --json number --jq '.[0].number')
+          if [ "$count" -gt 0 ]; then
+            title=$(jq -r .title <<<"$result")
+            jq -r .body <<<"$result" > "$RUNNER_TEMP/unused-images.md"
+            if [ -n "$existing" ]; then
+              gh issue edit "$existing" --title "$title" --body-file "$RUNNER_TEMP/unused-images.md"
+            else
+              gh label create unused-images --color FBCA04 --description "使われていない画像" --force
+              gh issue create --title "$title" --label unused-images --body-file "$RUNNER_TEMP/unused-images.md"
+            fi
+          elif [ -n "$existing" ]; then
+            gh issue close "$existing" --comment "$(jq -r .resolved <<<"$result")"
+          fi
+
+      # Failures here would otherwise go unnoticed (deploy failures did for ~2 weeks in Sept 2026), so open (or
+      # comment on) an issue to trigger a notification. Failed Cloudflare builds: cloudflare-build.yml.
+      - name: Report failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          body="原稿の取り込み、または使われていない画像の確認に失敗しました。取り込んだ原稿はサイトに反映されていない可能性があります。
+
+          - 実行ログ: ${RUN_URL}
+          - コミット: ${COMMIT_SHA}"
+          gh label create deploy-failure --color B60205 --description "サイトへの反映の失敗" --force
+          existing=$(gh issue list --label deploy-failure --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "サイトへの反映に失敗" --label deploy-failure --body "$body"
+          fi

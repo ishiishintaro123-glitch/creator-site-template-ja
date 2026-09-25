@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AdSlot from '../components/AdSlot.astro';
+import IllustrationCard from '../components/IllustrationCard.astro';
+import WorkCard from '../components/WorkCard.astro';
+import { siteConfig, t } from '../site-config.mjs';
+import { getGenres } from '../lib/catalog';
+import { getIllustrations } from '../lib/illustrations';
+import { getManga } from '../lib/manga';
+import { getWorks } from '../lib/novels';
+import { redirectTo } from '../lib/redirect';
+
+// With works in only one genre, that genre's list is the top page (no tabs, as before the other genres existed).
+const genres = await getGenres();
+if (genres.length < 2) {
+	return redirectTo(`/${genres[0] ?? 'novels'}`);
+}
+
+const [novels, manga, illustrations] = await Promise.all([getWorks(), getManga(), getIllustrations()]);
+const items = [
+	...novels.map((work) => ({ kind: 'novel' as const, date: work.latestPublishedAt, work })),
+	...manga.map((work) => ({ kind: 'manga' as const, date: work.latestPublishedAt, work })),
+	...illustrations.map((illustration) => ({ kind: 'illustration' as const, date: illustration.publishedAt, illustration })),
+].sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
+const LIST_FEED_INTERVAL = 3;
+---
+
+<Layout title={t.allWorksTitle} description={siteConfig.description} showAuthorLink showGenreNav>
+	<div hidden data-list-page="/"></div>
+	<h1 class="page-title">{t.navAll}</h1>
+	<ul class="work-list">
+		{
+			items.map((item, index) => (
+				<Fragment>
+					{item.kind === 'novel' && <WorkCard work={item.work} basePath="/novels" cover={item.work.cover} genreLabel={t.navNovels} />}
+					{item.kind === 'manga' && (
+						<WorkCard work={item.work} basePath="/manga" cover={item.work.cover} genreLabel={t.navManga} />
+					)}
+					{item.kind === 'illustration' && (
+						<IllustrationCard illustration={item.illustration} genreLabel={t.navIllustrations} />
+					)}
+					{/* An ad after every 3rd work, but never after the last one. */}
+					{siteConfig.ads?.listFeed && (index + 1) % LIST_FEED_INTERVAL === 0 && index < items.length - 1 && (
+						<li class="work-list__ad">
+							<AdSlot code={siteConfig.ads.listFeed} />
+						</li>
+					)}
+				</Fragment>
+			))
+		}
+	</ul>
+</Layout>
+
+<style>
+	.page-title {
+		font-size: 1.4rem;
+		margin: 0 0 1.25rem;
+	}
+
+	.work-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.work-list__ad {
+		padding: 0.5rem 0;
+	}
+</style>

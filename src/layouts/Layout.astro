@@ -1,0 +1,456 @@
+---
+import type { ImageMetadata } from 'astro';
+import { siteConfig, t } from '../site-config.mjs';
+import AdSlot from '../components/AdSlot.astro';
+import { getGenres, type Genre } from '../lib/catalog';
+import { getShareImageUrl, getSiteShareImage } from '../lib/share-card';
+
+interface Props {
+	title: string;
+	description?: string;
+	readingControls?: boolean;
+	showAuthorLink?: boolean;
+	/** Show the genre tabs (only rendered when the site has works in two or more genres). */
+	showGenreNav?: boolean;
+	/** Wider page for image-heavy pages (manga pages, illustrations). */
+	wide?: boolean;
+	/** Image for share cards on X and other social media. */
+	image?: ImageMetadata;
+	/** Back link at the left of the header, like a phone app's back button. toList: see public/back-links.js. */
+	back?: { href: string; label: string; toList?: boolean };
+}
+
+const {
+	title,
+	description = siteConfig.description,
+	readingControls = false,
+	showAuthorLink = false,
+	showGenreNav = false,
+	wide = false,
+	image,
+	back,
+} = Astro.props;
+const fullTitle = title ? `${title} | ${siteConfig.siteName}` : siteConfig.siteName;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+
+// The page's own image (covers, manga, illustrations) wins; otherwise the site-wide one from site.config.yaml, if set.
+const shareSource = image ?? getSiteShareImage();
+const shareImageUrl = shareSource ? await getShareImageUrl(shareSource) : null;
+
+const genreLinks: Record<Genre, { href: string; label: string }> = {
+	novels: { href: '/novels', label: t.navNovels },
+	manga: { href: '/manga', label: t.navManga },
+	illustrations: { href: '/illustrations', label: t.navIllustrations },
+};
+const genres = showGenreNav ? await getGenres() : [];
+const navItems =
+	genres.length >= 2 ? [{ href: '/', label: t.navAll }, ...genres.map((genre) => genreLinks[genre])] : [];
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+---
+
+<html lang={t.htmlLang}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<meta name="author" content={siteConfig.author} />
+		<link rel="canonical" href={canonicalUrl} />
+		<meta property="og:site_name" content={siteConfig.siteName} />
+		<meta property="og:title" content={title || siteConfig.siteName} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content={t.ogLocale} />
+		{shareImageUrl && <meta property="og:image" content={shareImageUrl} />}
+		<meta name="twitter:card" content={shareImageUrl ? 'summary_large_image' : 'summary'} />
+		{siteConfig.xAccount && <meta name="twitter:site" content={`@${siteConfig.xAccount}`} />}
+		<title>{fullTitle}</title>
+		<script src="/settings.js" is:inline></script>
+		<script src="/history.js" is:inline defer></script>
+		<script src="/synopsis.js" is:inline defer></script>
+		<script src="/back-links.js" is:inline defer></script>
+	</head>
+	<body>
+		<header class="site-header">
+			<div class:list={['wrap site-header__inner', { 'wrap--wide': wide }]}>
+				{/* 作者ページへの入口はトップページの作者名だけにする（UIをシンプルに保つため） */}
+				{back && (
+					<a
+						href={back.href}
+						class="header-back"
+						data-back-to-list={back.toList ? '' : undefined}
+						data-label-all={back.toList ? t.backToAllWorks : undefined}
+					>
+						{back.label}
+					</a>
+				)}
+				{showAuthorLink && (
+					<a href="/author" class="author-link">
+						{siteConfig.author}<span class="author-link__hint">{t.authorLinkHint}</span>
+					</a>
+				)}
+				{readingControls ? (
+					<details class="settings">
+						<summary>{t.readingSettings}</summary>
+						<div class="settings__panel">
+							<fieldset>
+								<legend>{t.textSize}</legend>
+								<div class="settings__options">
+									<label><input type="radio" name="size" value="m" checked /> {t.sizeSmall}</label>
+									<label><input type="radio" name="size" value="l" /> {t.sizeMedium}</label>
+									<label><input type="radio" name="size" value="xl" /> {t.sizeLarge}</label>
+								</div>
+							</fieldset>
+							<fieldset>
+								<legend>{t.font}</legend>
+								<div class="settings__options">
+									<label><input type="radio" name="font" value="serif" checked /> {t.fontSerif}</label>
+									<label><input type="radio" name="font" value="sans" /> {t.fontSans}</label>
+								</div>
+							</fieldset>
+							<fieldset>
+								<legend>{t.theme}</legend>
+								<div class="settings__options">
+									<label><input type="radio" name="theme" value="dark" checked /> {t.themeDark}</label>
+									<label><input type="radio" name="theme" value="light" /> {t.themeLight}</label>
+								</div>
+							</fieldset>
+							<button type="button" class="settings__done">{t.done}</button>
+						</div>
+					</details>
+				) : (
+					<button
+						type="button"
+						class="theme-toggle"
+						data-theme-toggle
+						data-label-to-light={t.switchToLight}
+						data-label-to-dark={t.switchToDark}
+					>
+						{t.switchToLight}
+					</button>
+				)}
+			</div>
+			{navItems.length > 0 && (
+				<nav class:list={['wrap genre-nav', { 'wrap--wide': wide }]} aria-label={t.genreNavLabel}>
+					{navItems.map((item) => (
+						<a href={item.href} class="genre-nav__link" aria-current={item.href === currentPath ? 'page' : undefined}>
+							{item.label}
+						</a>
+					))}
+				</nav>
+			)}
+		</header>
+		<main class:list={['wrap', { 'wrap--wide': wide }]}>
+			<slot />
+		</main>
+		{siteConfig.ads?.sidebar && !wide && (
+			<div class="sidebar-ad">
+				<AdSlot code={siteConfig.ads.sidebar} />
+			</div>
+		)}
+		<footer class="site-footer">
+			<div class:list={['wrap site-footer__inner', { 'wrap--wide': wide }]}>
+				<span>&copy; {new Date().getFullYear()} {siteConfig.author}</span>
+				<a href="/privacy">{t.privacyPolicy}</a>
+			</div>
+		</footer>
+	</body>
+</html>
+
+<style is:global>
+	@font-face {
+		font-family: 'Noto Serif JP';
+		src: url('/fonts/noto-serif-jp-400.woff2') format('woff2');
+		font-weight: 400;
+		font-style: normal;
+		font-display: swap;
+	}
+
+	:root {
+		/* ダーク配色・明朝体本文が既定（JS未実行時のフォールバックも含む）。
+		   ライトは data-theme="light" が明示的に付いたときのみ上書きする。 */
+		--bg: #1c1b1a;
+		--bg-elevated: #262523;
+		--text: #e8e4de;
+		--text-muted: #a39c92;
+		--accent: #d9835a;
+		--border: #38352f;
+		--font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN',
+			'Yu Gothic', 'Noto Sans JP', system-ui, sans-serif;
+		--font-serif: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+		--prose-font-family: var(--font-serif);
+		--prose-font-size: 1.0625rem;
+		--prose-line-height: 1.95;
+	}
+
+	/* English sites: Latin typefaces (Noto Serif JP is never downloaded) and the tighter line spacing English prose reads best at. */
+	:root:lang(en) {
+		--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+		--font-serif: Charter, 'Bitstream Charter', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+		--prose-line-height: 1.7;
+	}
+
+	:root[data-theme='light'] {
+		--bg: #faf7f2;
+		--bg-elevated: #ffffff;
+		--text: #2a2724;
+		--text-muted: #6b655d;
+		--accent: #a8451f;
+		--border: #e6e0d6;
+	}
+
+	:root[data-font='sans'] {
+		--prose-font-family: var(--font-sans);
+	}
+
+	:root[data-size='l'] {
+		--prose-font-size: 1.25rem;
+	}
+
+	:root[data-size='xl'] {
+		--prose-font-size: 1.5rem;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	html {
+		-webkit-text-size-adjust: 100%;
+	}
+
+	body {
+		margin: 0;
+		background: var(--bg);
+		color: var(--text);
+		font-family: var(--font-sans);
+		font-size: 16px;
+		line-height: 1.7;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	a {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: underline;
+	}
+
+	.wrap {
+		max-width: 42rem;
+		margin: 0 auto;
+		padding: 0 1.25rem;
+	}
+
+	.site-header {
+		border-bottom: 1px solid var(--border);
+	}
+
+	.site-header__inner {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 1rem;
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+	}
+
+	.site-header__inner > :not(.author-link, .header-back) {
+		flex-shrink: 0;
+	}
+
+	.header-back {
+		margin-right: auto;
+		min-width: 0;
+		font-size: 1rem;
+		font-weight: 600;
+		/* A bigger tap target without moving the text. */
+		padding: 0.5rem 0.5rem 0.5rem 0;
+		margin-block: -0.5rem;
+	}
+
+	.author-link {
+		margin-right: auto;
+		min-width: 0;
+		overflow-wrap: anywhere;
+		font-size: 1rem;
+		font-weight: 700;
+	}
+
+	.author-link__hint {
+		font-size: 0.8rem;
+		font-weight: 600;
+	}
+
+	.settings {
+		position: relative;
+		font-size: 1rem;
+	}
+
+	.settings summary {
+		cursor: pointer;
+		color: var(--accent);
+		font-weight: 600;
+		list-style: none;
+	}
+
+	.settings summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.settings summary:hover,
+	.settings[open] summary {
+		text-decoration: underline;
+	}
+
+	.theme-toggle {
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--accent);
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+	}
+
+	.theme-toggle:hover {
+		text-decoration: underline;
+	}
+
+	.settings__panel {
+		position: absolute;
+		right: 0;
+		top: calc(100% + 0.5rem);
+		z-index: 10;
+		background: var(--bg-elevated);
+		border: 1px solid var(--border);
+		border-radius: 0.5rem;
+		padding: 1.4rem 1.6rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		width: max-content;
+		max-width: 85vw;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+	}
+
+	.settings fieldset {
+		border: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.settings legend {
+		font-size: 0.85rem;
+		color: var(--text-muted);
+		padding: 0;
+		margin-bottom: 0.5rem;
+	}
+
+	.settings__options {
+		display: flex;
+		flex-wrap: nowrap;
+		gap: 1.25rem;
+	}
+
+	.settings label {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		white-space: nowrap;
+		color: var(--text);
+		font-weight: 400;
+		cursor: pointer;
+	}
+
+	.settings label input[type='radio'] {
+		width: 1.15em;
+		height: 1.15em;
+	}
+
+	.settings__done {
+		margin-top: 0.25rem;
+		align-self: flex-end;
+		background: var(--accent);
+		color: var(--bg-elevated);
+		border: none;
+		border-radius: 999px;
+		padding: 0.55rem 1.4rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		font-family: inherit;
+		cursor: pointer;
+	}
+
+	main {
+		min-height: 60vh;
+		padding-top: 1.5rem;
+		padding-bottom: 3rem;
+	}
+
+	/* Right-hand margin ad for wide screens only: placed beside the 42rem text column so it never overlaps the text. */
+	.sidebar-ad {
+		display: none;
+	}
+
+	@media (min-width: 1360px) {
+		.sidebar-ad {
+			display: block;
+			position: fixed;
+			top: 6rem;
+			left: calc(50% + 21rem + 2rem);
+			width: 300px;
+		}
+	}
+
+	.wrap--wide {
+		max-width: 60rem;
+	}
+
+	/* Tabs share the full width equally, each label centered in its share. */
+	.genre-nav {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(0, 1fr);
+		padding-bottom: 0.75rem;
+	}
+
+	.genre-nav__link {
+		justify-self: center;
+	}
+
+	.genre-nav__link {
+		font-weight: 600;
+		white-space: nowrap;
+		padding-bottom: 0.2rem;
+		border-bottom: 2px solid transparent;
+	}
+
+	.genre-nav__link[aria-current='page'] {
+		color: var(--text);
+		border-bottom-color: var(--accent);
+	}
+
+	.genre-nav__link:hover {
+		text-decoration: none;
+		border-bottom-color: var(--accent);
+	}
+
+	.site-footer {
+		border-top: 1px solid var(--border);
+		color: var(--text-muted);
+		font-size: 0.85rem;
+		padding: 1.5rem 0;
+	}
+
+	.site-footer__inner {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.5rem 1rem;
+	}
+</style>

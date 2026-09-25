@@ -1,0 +1,77 @@
+# サイトの基本設定
+# このファイルを書き換えて保存すると、サイト全体に反映されます。
+# GitHubの画面で編集する場合は、右上の鉛筆アイコンから編集 →「Commit changes」で保存してください。
+
+# サイトの言語（ja: 日本語 / en: English）
+language: ja
+
+# サイト名（ブラウザのタブや、リンクがXやLINEなどに貼られたときに表示されます）
+siteName: 作品サイト
+
+# 作者名（ページ下部の著作権表示などに使われます）
+author: 作者名
+
+# サイトの説明文（検索結果や、リンクがXやLINEなどに貼られたときに表示されます）
+description: 小説・漫画・イラストを公開しています。
+
+# リンクがXやLINEなどに貼られたときに表示される画像（サイト共通の1枚）
+# src/content/media/ に置いた画像のパスを書きます（Pages CMSの「サイト設定」からアップロードもできます）
+# 横長の 1200×630 ピクセルがおすすめです（縦長の画像は、ぼかした背景の中央に全体が収まるよう自動で並べ直されます）。PNG・JPEG・WebPが使えます
+# 表紙のある小説や、漫画・イラストのページでは、その作品の画像が優先されます。使わない場合は空欄のままにしてください
+shareImage: ""
+
+# サイトのURL（https:// から始まる、独自ドメインまたは *.workers.dev のアドレス）
+url: https://creator-site.example.workers.dev
+
+# XのユーザーID（@なしでも可）。使わない場合は空欄のままにしてください
+xAccount: ""
+
+# 作者ページ（トップページ左上の作者名を押すと開きます）
+# 自己紹介。改行もそのまま表示されます。使わない場合は空欄のままにしてください
+profile: ""
+
+# 作者ページに載せるリンク（X・購入先など）。label が表示名、url がリンク先（https:// から始まるもの）です
+# xAccount を設定している場合、Xへのリンクは自動で先頭に追加されます
+# 書き方の例:
+# links:
+#   - label: BOOTHで購入
+#     url: https://example.booth.pm
+links: []
+
+# AIによる読み取りを断る（true: 断る / false: 断らない）
+# true にすると、ChatGPT・Claude・Geminiなどを運営する会社の読み取りプログラムに、サイトを読まないよう求めます（robots.txt）。
+# AI向けの作品の案内（llms.txt）も作らなくなります。GoogleやBingなどの検索結果には、これまでどおり表示されます
+# 読まないよう「求める」だけで、従うかどうかは各社しだいです
+blockAi: false
+
+# 広告
+# 広告サービス（Google AdSense・忍者AdMax など）で発行された広告コードを、表示したい場所の欄に貼ってください
+# 収益は広告サービスに登録したあなたに直接入ります。空欄の場所には広告は表示されません
+# 広告サービスでは、場所ごとに別の広告（広告ユニット）を作るのが一般的です
+#
+# provider: 広告サービス名（プライバシーポリシーに表示されます）
+# providerPrivacyUrl: 広告サービスのプライバシーポリシーのURL（分かれば。https:// から始まるもの）
+# afterEpisode: 各話の本文の下（読み終わった位置。おすすめ）
+# sidebar: PCで見たときの本文の右側の余白（スクロールしても付いてきます。画面の狭いスマホでは表示されません）
+# workToc: 作品の目次の下
+# listFeed: 作品一覧で、作品3つごとの間
+# adsTxt: 広告サービスから ads.txt の設置を求められた場合、その内容を貼ってください（不要なら空欄）
+#
+# コードは「|」の次の行から、行頭に4つ空白を入れてそのまま貼ってください。書き方の例:
+# ads:
+#   provider: Google AdSense
+#   providerPrivacyUrl: https://policies.google.com/technologies/ads
+#   afterEpisode: |
+#     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+#     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-0000000000000000" data-ad-slot="0000000000"></ins>
+#     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+#   adsTxt: |
+#     google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+ads:
+  provider: ""
+  providerPrivacyUrl: ""
+  afterEpisode: ""
+  sidebar: ""
+  workToc: ""
+  listFeed: ""
+  adsTxt: ""

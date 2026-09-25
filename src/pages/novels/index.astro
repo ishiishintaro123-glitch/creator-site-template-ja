@@ -1,0 +1,51 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { siteConfig, t } from '../../site-config.mjs';
+import { getWorks } from '../../lib/novels';
+
+const works = await getWorks();
+
+const LIST_FEED_INTERVAL = 3;
+---
+
+<Layout title={t.novelListTitle} description={siteConfig.description} showAuthorLink showGenreNav>
+	<div hidden data-list-page="/novels"></div>
+	<h1 class="page-title">{t.novelsHeading}</h1>
+	<ul class="novel-list">
+		{
+			works.map((work, index) => (
+				<Fragment>
+					<WorkCard work={work} basePath="/novels" cover={work.cover} />
+					{/* An ad after every 3rd work, but never after the last one. */}
+					{siteConfig.ads?.listFeed && (index + 1) % LIST_FEED_INTERVAL === 0 && index < works.length - 1 && (
+						<li class="novel-list__ad">
+							<AdSlot code={siteConfig.ads.listFeed} />
+						</li>
+					)}
+				</Fragment>
+			))
+		}
+	</ul>
+</Layout>
+
+<style>
+	.page-title {
+		font-size: 1.4rem;
+		margin: 0 0 1.25rem;
+	}
+
+	.novel-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.novel-list__ad {
+		padding: 0.5rem 0;
+	}
+</style>

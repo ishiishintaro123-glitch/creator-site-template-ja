@@ -1,0 +1,85 @@
+---
+import { Image } from 'astro:assets';
+import { t } from '../site-config.mjs';
+import type { Illustration } from '../lib/illustrations';
+
+// One illustration in the scrolling feed: the first image large, then the title. Multi-image posts show a count
+// and open on their own page for the rest.
+interface Props {
+	illustration: Illustration;
+	/** Load the image right away (for the first few); the rest load as the reader scrolls. */
+	eager?: boolean;
+}
+
+const { illustration, eager = false } = Astro.props;
+const imageCount = illustration.images.length;
+---
+
+<li class="feed-item">
+	<a href={`/illustrations/${illustration.slug}`} class="feed-item__link">
+		<span class="feed-item__frame">
+			<Image
+				src={illustration.images[0]}
+				alt={illustration.title || illustration.description || t.illustrationAlt}
+				widths={[480, 800, 1200, 1600]}
+				sizes="(min-width: 60rem) 60rem, 100vw"
+				loading={eager ? 'eager' : 'lazy'}
+				class="feed-item__image"
+			/>
+			{imageCount > 1 && <span class="feed-item__count">{t.imageCount(imageCount)}</span>}
+		</span>
+		{illustration.title && <span class="feed-item__title">{illustration.title}</span>}
+	</a>
+</li>
+
+<style>
+	.feed-item__link {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		color: var(--accent);
+	}
+
+	.feed-item__link:hover {
+		text-decoration: none;
+	}
+
+	.feed-item__frame {
+		position: relative;
+		display: block;
+		max-width: 100%;
+	}
+
+	/* Natural size up to the page width, and never taller than the screen, so each picture is seen whole. */
+	.feed-item__image {
+		display: block;
+		max-width: 100%;
+		max-height: 90vh;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+		border-radius: 0.4rem;
+	}
+
+	.feed-item__count {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #fff;
+		background: rgba(0, 0, 0, 0.6);
+		border-radius: 999px;
+		padding: 0.15rem 0.6rem;
+	}
+
+	.feed-item__title {
+		margin-top: 0.6rem;
+		font-weight: 700;
+		overflow-wrap: anywhere;
+	}
+
+	.feed-item__link:hover .feed-item__title {
+		text-decoration: underline;
+	}
+</style>
