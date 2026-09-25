@@ -273,12 +273,18 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 		margin-block: -0.5rem;
 	}
 
+	/* A long pen name stops at two lines so the header stays short on phones; the author page shows it in full. */
 	.author-link {
 		margin-right: auto;
 		min-width: 0;
 		overflow-wrap: anywhere;
 		font-size: 1rem;
 		font-weight: 700;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
 	}
 
 	.author-link__hint {
@@ -452,5 +458,10 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 		flex-wrap: wrap;
 		justify-content: space-between;
 		gap: 0.5rem 1rem;
+	}
+
+	.site-footer__inner > span {
+		min-width: 0;
+		overflow-wrap: anywhere;
 	}
 </style>
