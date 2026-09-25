@@ -40,7 +40,8 @@ links: []
 
 # AIによる読み取りを断る（true: 断る / false: 断らない）
 # true にすると、ChatGPT・Claude・Geminiなどを運営する会社の読み取りプログラムに、サイトを読まないよう求めます（robots.txt）。
-# AI向けの作品の案内（llms.txt）も作らなくなります。GoogleやBingなどの検索結果には、これまでどおり表示されます
+# AI向けの作品の案内（llms.txt）も作らなくなるため、ChatGPTなどのAIに、あなたのサイトの作品を紹介してもらいにくくなります
+# GoogleやBingなどの検索結果には、これまでどおり表示されます
 # 読まないよう「求める」だけで、従うかどうかは各社しだいです
 blockAi: false
 

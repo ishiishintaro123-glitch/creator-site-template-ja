@@ -266,7 +266,7 @@ content:
       - name: blockAi
         label: AIによる読み取りを断る
         description: >-
-          オンにすると、ChatGPT・Claude・Geminiなどを運営する会社の読み取りプログラムに、このサイトを読まないよう求めます。AI向けの作品の案内（llms.txt）も作らなくなります。
+          オンにすると、ChatGPT・Claude・Geminiなどを運営する会社の読み取りプログラムに、このサイトを読まないよう求めます。AI向けの作品の案内（llms.txt）も作らなくなるため、ChatGPTなどのAIに、あなたのサイトの作品を紹介してもらいにくくなります。
           GoogleやBingなどの検索結果には、これまでどおり表示されます。読まないよう「求める」だけで、従うかどうかは各社しだいです。
         type: boolean
       - name: ads
