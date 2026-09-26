@@ -4,15 +4,18 @@ import IllustrationCard from './IllustrationCard.astro';
 import WorkCard from './WorkCard.astro';
 import { siteConfig, t } from '../site-config.mjs';
 import type { ListItem } from '../lib/catalog';
+import type { TagScope } from '../lib/tags';
 
-// Works of any genre in one list (the all-works list and tag pages), each labeled with its genre.
+// Works in one list (the all-works list and tag pages), each labeled with its genre when the list mixes genres.
 interface Props {
 	items: ListItem[];
-	/** Off where the genre is already clear (a genre's section of a tag page). */
+	/** Off where the genre is already clear (a genre's tag list). */
 	genreLabels?: boolean;
+	/** Which tag lists the works' tags open: 'all' where genres are mixed, else the list's genre. */
+	tagScope: TagScope;
 }
 
-const { items, genreLabels = true } = Astro.props;
+const { items, genreLabels = true, tagScope } = Astro.props;
 const label = (text: string) => (genreLabels ? text : undefined);
 
 const LIST_FEED_INTERVAL = 5;
@@ -23,13 +26,13 @@ const LIST_FEED_INTERVAL = 5;
 		items.map((item, index) => (
 			<Fragment>
 				{item.kind === 'novel' && (
-					<WorkCard work={item.work} basePath="/novels" cover={item.work.cover} genreLabel={label(t.navNovels)} />
+					<WorkCard work={item.work} basePath="/novels" cover={item.work.cover} genreLabel={label(t.navNovels)} tagScope={tagScope} />
 				)}
 				{item.kind === 'manga' && (
-					<WorkCard work={item.work} basePath="/manga" cover={item.work.cover} genreLabel={label(t.navManga)} />
+					<WorkCard work={item.work} basePath="/manga" cover={item.work.cover} genreLabel={label(t.navManga)} tagScope={tagScope} />
 				)}
 				{item.kind === 'illustration' && (
-					<IllustrationCard illustration={item.illustration} genreLabel={label(t.navIllustrations)} />
+					<IllustrationCard illustration={item.illustration} genreLabel={label(t.navIllustrations)} tagScope={tagScope} />
 				)}
 				{/* An ad after every 5th work, but never after the last one. */}
 				{siteConfig.ads?.listFeed && (index + 1) % LIST_FEED_INTERVAL === 0 && index < items.length - 1 && (

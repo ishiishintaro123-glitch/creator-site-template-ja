@@ -34,3 +34,7 @@ export async function getAllItems(): Promise<ListItem[]> {
 	];
 	return items.sort((a, b) => b.date.valueOf() - a.date.valueOf());
 }
+
+export function genreOfItem(item: ListItem): Genre {
+	return item.kind === 'novel' ? 'novels' : item.kind === 'manga' ? 'manga' : 'illustrations';
+}

@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import AdSlot from './AdSlot.astro';
 import TagList from './TagList.astro';
+import { tagListPaths } from '../lib/tags';
 import { siteConfig, t } from '../site-config.mjs';
 
 // A work's page with its table of contents; shared by novels and manga.
@@ -24,17 +25,18 @@ interface Props {
 
 const { work, basePath, historyKey, backHref, backLabel, cover } = Astro.props;
 const { slug, episodes } = work;
+const tagLists = await tagListPaths(work.tags, basePath === '/novels' ? 'novels' : 'manga');
 const dateFormatter = new Intl.DateTimeFormat(t.dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-<Layout title={work.title} description={work.synopsis || undefined} image={cover} back={{ href: backHref, label: backLabel, toList: true, tags: work.tags }}>
+<Layout title={work.title} description={work.synopsis || undefined} image={cover} back={{ href: backHref, label: backLabel, toList: true, tagLists }}>
 	<header class:list={['work-header', { 'work-header--with-cover': cover }]}>
 		{cover && <Image src={cover} alt="" class="work-header__cover" widths={[240, 480]} sizes="240px" />}
 		<h1 class="work-header__title">{work.title}</h1>
 		{work.synopsis && <p class="work-header__synopsis">{work.synopsis}</p>}
 		{work.tags.length > 0 && (
 			<div class="work-header__tags">
-				<TagList tags={work.tags} />
+				<TagList tags={work.tags} scope={basePath === '/novels' ? 'novels' : 'manga'} />
 			</div>
 		)}
 	</header>

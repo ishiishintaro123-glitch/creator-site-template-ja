@@ -1,12 +1,15 @@
 ---
-import { cleanTags, tagHref } from '../lib/tags';
+import { cleanTags, tagHref, type TagScope } from '../lib/tags';
 
 // A work's tags; each opens the list of works with that tag.
 interface Props {
 	tags: string[];
+	/** The work's own genre, or 'all' in the all-works list (see TagScope). */
+	scope: TagScope;
 }
 
-const tags = await Promise.all(cleanTags(Astro.props.tags).map(async (name) => ({ name, href: await tagHref(name) })));
+const { scope } = Astro.props;
+const tags = await Promise.all(cleanTags(Astro.props.tags).map(async (name) => ({ name, href: await tagHref(name, scope) })));
 ---
 
 {tags.length > 0 && (

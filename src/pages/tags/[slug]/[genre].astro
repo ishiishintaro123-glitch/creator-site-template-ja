@@ -1,0 +1,64 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import MixedWorkList from '../../../components/MixedWorkList.astro';
+import { t } from '../../../site-config.mjs';
+import { genreOfItem, type Genre } from '../../../lib/catalog';
+import { getTags, hasAllGenreTagPages, tagPath, type Tag } from '../../../lib/tags';
+
+// One genre's works with a tag, opened by pressing the tag in that genre's list or on one of its works:
+// a reader looking through novels most likely wants more novels.
+export async function getStaticPaths() {
+	return (await getTags()).flatMap((tag) =>
+		tag.genres.map((genre) => ({ params: { slug: tag.slug, genre }, props: { tag, genre } })),
+	);
+}
+
+interface Props {
+	tag: Tag;
+	genre: Genre;
+}
+
+const { tag, genre } = Astro.props;
+const genreNames: Record<Genre, string> = { novels: t.navNovels, manga: t.navManga, illustrations: t.navIllustrations };
+const multiGenreSite = await hasAllGenreTagPages();
+// On a one-genre site the genre name would say nothing new.
+const title = multiGenreSite ? t.tagGenrePageTitle(tag.name, genreNames[genre]) : t.tagPageTitle(tag.name);
+const items = tag.items.filter((item) => genreOfItem(item) === genre);
+const otherGenres = tag.genres.length > 1;
+// When only this genre uses the tag, the all-genre list shows the same works; search engines should list just that one.
+const canonicalPath = multiGenreSite && !otherGenres ? `${tagPath(tag, 'all')}/` : undefined;
+---
+
+<Layout title={title} showAuthorLink showGenreNav currentTab={`/${genre}`} canonicalPath={canonicalPath}>
+	<div hidden data-list-page={tagPath(tag, genre)} data-list-back-label={t.backToTag(tag.name)}></div>
+	<h1 class="page-title">{title}</h1>
+	<MixedWorkList items={items} genreLabels={false} tagScope={genre} />
+	{otherGenres && (
+		<a class="all-genres" href={tagPath(tag, 'all')}>
+			{t.tagAllGenres}
+		</a>
+	)}
+</Layout>
+
+<style>
+	.page-title {
+		font-size: 1.4rem;
+		margin: 0 0 1.25rem;
+		overflow-wrap: anywhere;
+	}
+
+	.all-genres {
+		display: block;
+		width: fit-content;
+		margin: 2rem auto 0;
+		font-weight: 600;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 0.5rem 1.2rem;
+	}
+
+	.all-genres:hover {
+		text-decoration: none;
+		border-color: var(--accent);
+	}
+</style>

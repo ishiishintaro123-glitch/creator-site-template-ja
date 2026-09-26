@@ -17,7 +17,7 @@ const items = await getAllItems();
 <Layout title={t.allWorksTitle} description={siteConfig.description} showAuthorLink showGenreNav>
 	<div hidden data-list-page="/"></div>
 	<h1 class="page-title">{t.navAll}</h1>
-	<MixedWorkList items={items} />
+	<MixedWorkList items={items} tagScope="all" />
 </Layout>
 
 <style>

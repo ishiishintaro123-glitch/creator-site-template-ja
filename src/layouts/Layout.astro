@@ -4,7 +4,6 @@ import { siteConfig, t } from '../site-config.mjs';
 import AdSlot from '../components/AdSlot.astro';
 import { getGenres, type Genre } from '../lib/catalog';
 import { getShareImageUrl, getSiteShareImage } from '../lib/share-card';
-import { cleanTags, tagHref } from '../lib/tags';
 
 interface Props {
 	title: string;
@@ -17,8 +16,12 @@ interface Props {
 	wide?: boolean;
 	/** Image for share cards on X and other social media. */
 	image?: ImageMetadata;
-	/** Back link at the left of the header, like a phone app's back button. toList and tags: see public/back-links.js. */
-	back?: { href: string; label: string; toList?: boolean; tags?: string[] };
+	/** Back link at the left of the header, like a phone app's back button. toList and tagLists: see public/back-links.js. */
+	back?: { href: string; label: string; toList?: boolean; tagLists?: string[] };
+	/** The genre tab to mark as current when the page isn't a tab's own list (a genre's tag list). */
+	currentTab?: string;
+	/** Address search engines should treat this page as (when another page shows the same works). */
+	canonicalPath?: string;
 }
 
 const {
@@ -30,9 +33,11 @@ const {
 	wide = false,
 	image,
 	back,
+	currentTab,
+	canonicalPath,
 } = Astro.props;
 const fullTitle = title ? `${title} | ${siteConfig.siteName}` : siteConfig.siteName;
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const canonicalUrl = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).toString();
 
 // The page's own image (covers, manga, illustrations) wins; otherwise the site-wide one from site.config.yaml, if set.
 const shareSource = image ?? getSiteShareImage();
@@ -46,11 +51,7 @@ const genreLinks: Record<Genre, { href: string; label: string }> = {
 const genres = showGenreNav ? await getGenres() : [];
 const navItems =
 	genres.length >= 2 ? [{ href: '/', label: t.navAll }, ...genres.map((genre) => genreLinks[genre])] : [];
-// The tag lists this work appears in: the back link returns to one of them only when the reader came from it.
-const backTagPaths = back?.tags
-	? (await Promise.all(cleanTags(back.tags).map(tagHref))).filter(Boolean).join(' ')
-	: undefined;
-const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const currentPath = currentTab ?? (Astro.url.pathname.replace(/\/+$/, '') || '/');
 ---
 
 <html lang={t.htmlLang}>
@@ -87,7 +88,7 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 						class="header-back"
 						data-back-to-list={back.toList ? '' : undefined}
 						data-label-all={back.toList ? t.backToAllWorks : undefined}
-						data-tag-lists={backTagPaths || undefined}
+						data-tag-lists={back.tagLists?.length ? back.tagLists.join(' ') : undefined}
 					>
 						{back.label}
 					</a>

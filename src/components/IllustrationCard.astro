@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import TagList from './TagList.astro';
 import { t } from '../site-config.mjs';
+import type { TagScope } from '../lib/tags';
 import type { Illustration } from '../lib/illustrations';
 
 // An illustration in the all-works list, laid out like the novel and manga cards.
@@ -9,9 +10,11 @@ interface Props {
 	illustration: Illustration;
 	/** Genre name shown above the title; left out when the site has only one genre. */
 	genreLabel?: string;
+	/** 'all' in lists of every genre; otherwise the tags open the illustration tag lists. */
+	tagScope?: TagScope;
 }
 
-const { illustration, genreLabel } = Astro.props;
+const { illustration, genreLabel, tagScope = 'illustrations' } = Astro.props;
 const href = `/illustrations/${illustration.slug}`;
 const imageCount = illustration.images.length;
 ---
@@ -26,7 +29,7 @@ const imageCount = illustration.images.length;
 		<a href={href} class="card__title">{illustration.label}</a>
 		{illustration.tags.length > 0 && (
 			<div class="card__tags">
-				<TagList tags={illustration.tags} />
+				<TagList tags={illustration.tags} scope={tagScope} />
 			</div>
 		)}
 	</div>

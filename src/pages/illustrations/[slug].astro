@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import TagList from '../../components/TagList.astro';
+import { tagListPaths } from '../../lib/tags';
 import { siteConfig, t } from '../../site-config.mjs';
 import { getIllustrations, type Illustration } from '../../lib/illustrations';
 
@@ -26,7 +27,7 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 	description={illustration.description || undefined}
 	wide
 	image={illustration.images[0]}
-	back={{ href: '/illustrations', label: t.backToIllustrationList, toList: true, tags: illustration.tags }}
+	back={{ href: '/illustrations', label: t.backToIllustrationList, toList: true, tagLists: await tagListPaths(illustration.tags, 'illustrations') }}
 >
 	<div class="images">
 		{illustration.images.map((image, index) => (
@@ -46,7 +47,7 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 		{illustration.description && <p class="info__description">{illustration.description}</p>}
 		{illustration.tags.length > 0 && (
 			<div class="info__tags">
-				<TagList tags={illustration.tags} />
+				<TagList tags={illustration.tags} scope="illustrations" />
 			</div>
 		)}
 	</div>
