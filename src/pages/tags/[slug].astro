@@ -2,10 +2,10 @@
 import Layout from '../../layouts/Layout.astro';
 import MixedWorkList from '../../components/MixedWorkList.astro';
 import { t } from '../../site-config.mjs';
-import { getGenres } from '../../lib/catalog';
 import { getTags, type Tag } from '../../lib/tags';
 
-// Works of every genre that share a tag, opened by pressing the tag on a work.
+// Works that share a tag, opened by pressing the tag on a work. Split by genre so a genre the creator posts often
+// (usually illustrations) doesn't push the others far down.
 export async function getStaticPaths() {
 	return (await getTags()).map((tag) => ({ params: { slug: tag.slug }, props: { tag } }));
 }
@@ -16,13 +16,31 @@ interface Props {
 
 const { tag } = Astro.props;
 const title = t.tagPageTitle(tag.name);
-const genreLabels = (await getGenres()).length >= 2;
+const sections = (
+	[
+		{ kind: 'novel', heading: t.navNovels },
+		{ kind: 'manga', heading: t.navManga },
+		{ kind: 'illustration', heading: t.navIllustrations },
+	] as const
+)
+	.map((section) => ({ ...section, items: tag.items.filter((item) => item.kind === section.kind) }))
+	.filter((section) => section.items.length > 0);
 ---
 
 <Layout title={title} showAuthorLink showGenreNav>
 	<div hidden data-list-page={`/tags/${tag.slug}`} data-list-back-label={t.backToTag(tag.name)}></div>
 	<h1 class="page-title">{title}</h1>
-	<MixedWorkList items={tag.items} genreLabels={genreLabels} />
+	{/* With one genre the heading would only repeat what the list shows. */}
+	{sections.length === 1 ? (
+		<MixedWorkList items={sections[0].items} genreLabels={false} />
+	) : (
+		sections.map((section) => (
+			<section class="genre-section">
+				<h2 class="genre-section__heading">{section.heading}</h2>
+				<MixedWorkList items={section.items} genreLabels={false} />
+			</section>
+		))
+	)}
 </Layout>
 
 <style>
@@ -30,5 +48,14 @@ const genreLabels = (await getGenres()).length >= 2;
 		font-size: 1.4rem;
 		margin: 0 0 1.25rem;
 		overflow-wrap: anywhere;
+	}
+
+	.genre-section + .genre-section {
+		margin-top: 2.5rem;
+	}
+
+	.genre-section__heading {
+		font-size: 1.1rem;
+		margin: 0 0 0.75rem;
 	}
 </style>

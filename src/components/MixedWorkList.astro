@@ -5,10 +5,10 @@ import WorkCard from './WorkCard.astro';
 import { siteConfig, t } from '../site-config.mjs';
 import type { ListItem } from '../lib/catalog';
 
-// Works of every genre in one list (the all-works list and tag pages), each labeled with its genre.
+// Works of any genre in one list (the all-works list and tag pages), each labeled with its genre.
 interface Props {
 	items: ListItem[];
-	/** Off when the site has only one genre, where the label says nothing new. */
+	/** Off where the genre is already clear (a genre's section of a tag page). */
 	genreLabels?: boolean;
 }
 
