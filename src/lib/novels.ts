@@ -7,6 +7,7 @@ import { safeContent } from '../markdown/safe-content.mjs';
 import { urlLinks } from '../markdown/url-links.mjs';
 import { t } from '../site-config.mjs';
 import { resolveImage } from './media';
+import { releasedEpisodes } from './dates.mjs';
 
 export interface Episode {
 	id: string;
@@ -55,7 +56,7 @@ async function load(): Promise<Work[]> {
 				throw new Error(t.workTooLarge(entry.data.title, file));
 			}
 			const episodes = await Promise.all(
-				entry.data.episodes.map(async (episode, index) => ({
+				releasedEpisodes(entry.data.episodes).map(async (episode, index) => ({
 					id: `${entry.id}/${index + 1}`,
 					number: index + 1,
 					title: episode.title,

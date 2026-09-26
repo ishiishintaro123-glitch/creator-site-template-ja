@@ -4,6 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import TagList from '../../components/TagList.astro';
 import { tagListPaths } from '../../lib/tags';
+import { formatDate } from '../../lib/format-date';
 import { siteConfig, t } from '../../site-config.mjs';
 import { getIllustrations, type Illustration } from '../../lib/illustrations';
 
@@ -13,7 +14,6 @@ export async function getStaticPaths() {
 }
 
 const { illustration } = Astro.props as { illustration: Illustration };
-const dateFormatter = new Intl.DateTimeFormat(t.dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
 const alt = illustration.title || illustration.description || t.illustrationAlt;
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
@@ -43,7 +43,7 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 
 	<div class="info">
 		{illustration.title && <h1 class="info__title">{illustration.title}</h1>}
-		<p class="info__date">{dateFormatter.format(illustration.publishedAt)}</p>
+		<p class="info__date">{formatDate(illustration.publishedAt)}</p>
 		{illustration.description && <p class="info__description">{illustration.description}</p>}
 		{illustration.tags.length > 0 && (
 			<div class="info__tags">

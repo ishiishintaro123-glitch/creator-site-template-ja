@@ -5,12 +5,12 @@ tags:
   - サンプル
 episodes:
   - title: はじまり
-    publishedAt: 2026-01-10
+    publishedAt: "2026-01-10T00:00"
     pages:
       - src/content/media/samples/manga-ep1-p1.png
       - src/content/media/samples/manga-ep1-p2.png
       - src/content/media/samples/manga-ep1-p3.png
-  - publishedAt: 2026-01-17
+  - publishedAt: "2026-01-17T00:00"
     pages:
       - src/content/media/samples/manga-ep2-p1.png
       - src/content/media/samples/manga-ep2-p2.png

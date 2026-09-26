@@ -1,10 +1,22 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { t } from './site-config.mjs';
+import { siteConfig, t } from './site-config.mjs';
+import { parseSiteDate } from './lib/dates.mjs';
 
 const optionalText = z.string().trim().nullish().transform((value) => value ?? '');
 const tags = z.array(z.string()).nullish().transform((value) => value ?? []);
-const date = z.coerce.date({ error: t.dateInvalid });
+// Publish date and time on the creator's clock (see src/lib/dates.mjs). A future one keeps the work or episode hidden
+// until then (scheduled publishing; .github/workflows/scheduled-publish.yml rebuilds the site when the time comes).
+const dateOn = (message: string) =>
+	z.any().transform((value, context) => {
+		const date = parseSiteDate(value, siteConfig.timeZone);
+		if (!date) {
+			context.addIssue({ code: 'custom', message });
+			return z.NEVER;
+		}
+		return date;
+	});
+const date = dateOn(t.dateInvalid);
 // Image paths as saved by Pages CMS (src/content/media/...); they are checked against the actual files in src/lib/media.ts.
 const imagePath = z.string().trim().min(1);
 // Pages CMS saves one file as a string and several as a list; accept both.
@@ -24,7 +36,7 @@ const novels = defineCollection({
 			.array(
 				z.object({
 					title: optionalText, // Optional episode subtitle
-					publishedAt: z.coerce.date({ error: t.episodeDateInvalid }),
+					publishedAt: dateOn(t.episodeDateInvalid),
 					body: z.string({ error: t.episodeBodyNotSet }).trim().min(1, t.episodeBodyNotSet),
 				}),
 			)

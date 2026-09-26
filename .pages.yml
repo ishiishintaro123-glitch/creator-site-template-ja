@@ -69,8 +69,11 @@ content:
             label: 話のタイトル（任意）
             type: string
           - name: publishedAt
-            label: 公開日
+            label: 公開日時
+            description: 未来の日時にすると、その時刻に自動で公開されます（1時間ほど遅れることがあります）。
             type: date
+            options:
+              time: true
           - name: body
             label: 本文
             description: 改行はそのまま表示されます。空行を入れると段落の区切りになります。
@@ -136,8 +139,11 @@ content:
             label: 話のタイトル（任意）
             type: string
           - name: publishedAt
-            label: 公開日
+            label: 公開日時
+            description: 未来の日時にすると、その時刻に自動で公開されます（1時間ほど遅れることがあります）。
             type: date
+            options:
+              time: true
           - name: pages
             label: この話のページ
             description: >-
@@ -187,8 +193,11 @@ content:
         label: 説明（任意）
         type: text
       - name: publishedAt
-        label: 公開日
+        label: 公開日時
+        description: 未来の日時にすると、その時刻に自動で公開されます（1時間ほど遅れることがあります）。
         type: date
+        options:
+          time: true
       - name: tags
         label: タグ
         type: string

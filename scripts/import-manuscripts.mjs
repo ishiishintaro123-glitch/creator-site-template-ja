@@ -8,6 +8,7 @@ import { existsSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from
 import { basename, join, normalize } from 'node:path';
 import yaml from 'js-yaml';
 import { siteConfig } from '../src/site-config.mjs';
+import { parseSiteDate, toSiteDateString } from '../src/lib/dates.mjs';
 
 const WORKS_DIR = 'src/content/novels';
 const IMPORT_DIR = 'src/content/import';
@@ -24,20 +25,18 @@ function decode(buffer) {
 	}
 }
 
-function today() {
-	// The creator's calendar day, not the build server's (UTC).
-	const timeZone = siteConfig.language === 'ja' ? 'Asia/Tokyo' : 'UTC';
-	return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+// Dates and times on the creator's clock, in the form Pages CMS saves ("2026-09-27T18:00").
+function now() {
+	return toSiteDateString(new Date(), siteConfig.timeZone);
 }
 
 function toDateString(value) {
-	if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
-	if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value.trim())) return value.trim().slice(0, 10);
-	return null;
+	const date = parseSiteDate(value, siteConfig.timeZone);
+	return date ? toSiteDateString(date, siteConfig.timeZone) : null;
 }
 
 // Turns one manuscript file into an episode. The title comes from front matter or a leading "# 見出し" line,
-// the date from front matter (publishedAt or date), otherwise today.
+// the date and time from front matter (publishedAt or date), otherwise now.
 function toEpisode(text) {
 	let body = text.replace(/^﻿/, '').replace(/\r\n?/g, '\n');
 	let meta = {};
@@ -63,7 +62,7 @@ function toEpisode(text) {
 	body = body.replace(/\s+$/, '').replace(/^\n+/, '');
 	const episode = {};
 	if (title) episode.title = title;
-	episode.publishedAt = toDateString(meta.publishedAt) ?? toDateString(meta.date) ?? today();
+	episode.publishedAt = toDateString(meta.publishedAt) ?? toDateString(meta.date) ?? now();
 	episode.body = body;
 	return episode;
 }

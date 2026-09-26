@@ -111,12 +111,13 @@ const ja = {
 	// Build-time errors: works
 	workTitleNotSet: 'title（作品名）が未設定です',
 	workSynopsisNotSet: 'synopsis（あらすじ）が未設定です',
-	episodeDateInvalid: 'episodes の publishedAt（公開日）を 2026-09-24 の形式で書いてください',
+	episodeDateInvalid: 'episodes の publishedAt（公開日時）を 2026-09-24T18:00 の形式で書いてください',
 	episodeBodyNotSet: 'episodes の body（本文）が未設定です',
 	workIdInvalid: (file) =>
 		`${file} のファイル名（作品ID）は、半角英小文字・数字・ハイフンだけで付けてください（例: my-story.yaml）。作品IDはURLに使われます`,
 	// Build-time errors: manga and illustrations
-	dateInvalid: '公開日を 2026-09-24 の形式で書いてください',
+	dateInvalid: '公開日時を 2026-09-24T18:00 の形式で書いてください',
+	timeZoneInvalid: 'timeZone は Asia/Tokyo のようなタイムゾーン名で書いてください',
 	mangaPagesNotSet: '漫画の各話にはページの画像を1枚以上入れてください',
 	illustrationImagesNotSet: 'イラストには画像を1枚以上入れてください',
 	imageNotFound: (path, file) => `${file} の画像「${path}」が見つかりません。Pages CMSでアップロードし直すか、src/content/media/ にあるか確認してください`,
@@ -229,11 +230,12 @@ const en = {
 
 	workTitleNotSet: 'title (novel title) is not set',
 	workSynopsisNotSet: 'synopsis is not set',
-	episodeDateInvalid: 'publishedAt in episodes must be a date like 2026-09-24',
+	episodeDateInvalid: 'publishedAt in episodes must be a date and time like 2026-09-24T18:00',
 	episodeBodyNotSet: 'body (chapter text) in episodes is not set',
 	workIdInvalid: (file) =>
 		`The file name (novel ID) of ${file} must use only lowercase letters, numbers and hyphens (e.g. my-story.yaml). The novel ID is used in URLs`,
-	dateInvalid: 'The publish date must be a date like 2026-09-24',
+	dateInvalid: 'The publish date must be a date and time like 2026-09-24T18:00',
+	timeZoneInvalid: 'timeZone must be a time zone name such as America/New_York',
 	mangaPagesNotSet: 'Each manga chapter needs at least one page image',
 	illustrationImagesNotSet: 'An illustration needs at least one image',
 	imageNotFound: (path, file) => `The image "${path}" in ${file} was not found. Upload it again in Pages CMS, or check that it is in src/content/media/`,

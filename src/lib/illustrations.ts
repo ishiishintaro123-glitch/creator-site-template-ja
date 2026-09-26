@@ -2,6 +2,8 @@ import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
 import { t } from '../site-config.mjs';
 import { resolveImage } from './media';
+import { isReleased } from './dates.mjs';
+import { formatDate } from './format-date';
 
 export interface Illustration {
 	slug: string;
@@ -18,8 +20,8 @@ export interface Illustration {
 // Illustrations (src/content/illustrations/<slug>.yaml), newest first.
 async function load(): Promise<Illustration[]> {
 	const entries = await getCollection('illustrations');
-	const formatDate = new Intl.DateTimeFormat(t.dateLocale, { year: 'numeric', month: 'long', day: 'numeric' }).format;
 	return entries
+		.filter((entry) => isReleased(entry.data.publishedAt)) // Scheduled for later: hidden until then.
 		.map((entry) => {
 			const file = `src/content/illustrations/${entry.id}.yaml`;
 			if (!/^[a-z0-9][a-z0-9-]*$/.test(entry.id)) throw new Error(t.workIdInvalid(file));

@@ -2,6 +2,7 @@ import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
 import { t } from '../site-config.mjs';
 import { resolveImage } from './media';
+import { releasedEpisodes } from './dates.mjs';
 
 export interface MangaEpisode {
 	id: string;
@@ -28,7 +29,7 @@ async function load(): Promise<Manga[]> {
 		.map((entry) => {
 			const file = `src/content/manga/${entry.id}.yaml`;
 			if (!/^[a-z0-9][a-z0-9-]*$/.test(entry.id)) throw new Error(t.workIdInvalid(file));
-			const episodes = entry.data.episodes.map((episode, index) => ({
+			const episodes = releasedEpisodes(entry.data.episodes).map((episode, index) => ({
 				id: `${entry.id}/${index + 1}`,
 				number: index + 1,
 				title: episode.title,

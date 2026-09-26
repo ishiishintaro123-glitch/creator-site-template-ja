@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import yaml from 'js-yaml';
 import { z } from 'astro/zod';
 import { LANGUAGES, getStrings } from './i18n/strings.mjs';
+import { isTimeZone } from './lib/dates.mjs';
 
 const CONFIG_FILE = 'site.config.yaml';
 
@@ -33,6 +34,13 @@ function buildSchema(t) {
 			.refine((value) => value === '' || /^[A-Za-z0-9_]{1,15}$/.test(value), { error: t.xAccountInvalid })
 			.nullish()
 			.transform((value) => value ?? ''),
+		// The creator's clock, for publish dates and times (scheduled episodes). Defaults to the language's usual zone.
+		timeZone: z
+			.string()
+			.trim()
+			.nullish()
+			.transform((value) => value || (t.htmlLang === 'ja' ? 'Asia/Tokyo' : 'UTC'))
+			.refine(isTimeZone, { error: t.timeZoneInvalid }),
 		// Asks AI crawlers to stay away (robots.txt) and drops llms.txt. Search engines are unaffected.
 		blockAi: z.boolean({ error: t.blockAiInvalid }).nullish().transform((value) => value ?? false),
 		profile: z
