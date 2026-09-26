@@ -4,6 +4,7 @@ import { siteConfig, t } from '../site-config.mjs';
 import AdSlot from '../components/AdSlot.astro';
 import { getGenres, type Genre } from '../lib/catalog';
 import { getShareImageUrl, getSiteShareImage } from '../lib/share-card';
+import { cleanTags, tagHref } from '../lib/tags';
 
 interface Props {
 	title: string;
@@ -16,8 +17,8 @@ interface Props {
 	wide?: boolean;
 	/** Image for share cards on X and other social media. */
 	image?: ImageMetadata;
-	/** Back link at the left of the header, like a phone app's back button. toList: see public/back-links.js. */
-	back?: { href: string; label: string; toList?: boolean };
+	/** Back link at the left of the header, like a phone app's back button. toList and tags: see public/back-links.js. */
+	back?: { href: string; label: string; toList?: boolean; tags?: string[] };
 }
 
 const {
@@ -45,6 +46,10 @@ const genreLinks: Record<Genre, { href: string; label: string }> = {
 const genres = showGenreNav ? await getGenres() : [];
 const navItems =
 	genres.length >= 2 ? [{ href: '/', label: t.navAll }, ...genres.map((genre) => genreLinks[genre])] : [];
+// The tag lists this work appears in: the back link returns to one of them only when the reader came from it.
+const backTagPaths = back?.tags
+	? (await Promise.all(cleanTags(back.tags).map(tagHref))).filter(Boolean).join(' ')
+	: undefined;
 const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 ---
 
@@ -82,6 +87,7 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 						class="header-back"
 						data-back-to-list={back.toList ? '' : undefined}
 						data-label-all={back.toList ? t.backToAllWorks : undefined}
+						data-tag-lists={backTagPaths || undefined}
 					>
 						{back.label}
 					</a>
@@ -266,6 +272,7 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 	.header-back {
 		margin-right: auto;
 		min-width: 0;
+		overflow-wrap: anywhere;
 		font-size: 1rem;
 		font-weight: 600;
 		/* A bigger tap target without moving the text. */

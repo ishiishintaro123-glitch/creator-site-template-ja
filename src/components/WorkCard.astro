@@ -1,6 +1,7 @@
 ---
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
+import TagList from './TagList.astro';
 import { t } from '../site-config.mjs';
 
 // A novel or manga in a list. A cover image, when given, appears to the left of the text.
@@ -56,11 +57,9 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 			{t.showMore}
 		</button>
 		{work.tags.length > 0 && (
-			<ul class="novel-card__tags">
-				{work.tags.map((tag) => (
-					<li>{tag}</li>
-				))}
-			</ul>
+			<div class="novel-card__tags">
+				<TagList tags={work.tags} />
+			</div>
 		)}
 	</div>
 	<a
@@ -188,20 +187,7 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 	}
 
 	.novel-card__tags {
-		list-style: none;
-		margin: 0.6rem 0 0;
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
-	}
-
-	.novel-card__tags li {
-		font-size: 0.75rem;
-		color: var(--text-muted);
-		border: 1px solid var(--border);
-		border-radius: 999px;
-		padding: 0.15rem 0.6rem;
+		margin-top: 0.6rem;
 	}
 
 	.novel-card__link {

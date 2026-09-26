@@ -1,24 +1,29 @@
 // Sends "back to the list" links to the list the reader actually came from.
 // List pages remember themselves for this tab; a link marked data-back-to-list switches to the all-works list
-// (label from data-label-all) when that is where the reader started. Without a remembered list, links are unchanged.
+// (label from data-label-all) or a tag's list (label from that list's data-list-back-label) when that is where
+// the reader started — a tag's list only when the work has that tag (data-tag-lists). Without a remembered list, links are unchanged.
 // A back link to the page the reader just came from goes back in history, keeping that page's scroll position.
 (function () {
 	'use strict';
 
 	var STORAGE_KEY = 'creator-site:list-origin';
+	var LABEL_KEY = 'creator-site:list-origin-label';
 	var ALL_WORKS = '/';
+	var TAG_LIST = /^\/tags\//;
 
-	function read() {
+	function read(key) {
 		try {
-			return sessionStorage.getItem(STORAGE_KEY);
+			return sessionStorage.getItem(key);
 		} catch (e) {
 			return null;
 		}
 	}
 
-	function write(path) {
+	function write(path, label) {
 		try {
 			sessionStorage.setItem(STORAGE_KEY, path);
+			if (label) sessionStorage.setItem(LABEL_KEY, label);
+			else sessionStorage.removeItem(LABEL_KEY);
 		} catch (e) {
 			/* sessionStorage unavailable — links keep pointing at the genre's list */
 		}
@@ -27,18 +32,27 @@
 	function update() {
 		var marker = document.querySelector('[data-list-page]');
 		if (marker) {
-			write(marker.getAttribute('data-list-page'));
+			write(marker.getAttribute('data-list-page'), marker.getAttribute('data-list-back-label'));
 			return;
 		}
-		var toAllWorks = read() === ALL_WORKS;
+		var origin = read(STORAGE_KEY);
+		var tagLabel = origin && TAG_LIST.test(origin) ? read(LABEL_KEY) : null;
 		document.querySelectorAll('a[data-back-to-list]').forEach(function (link) {
 			// Keep the genre's list so the link can switch back when the page is shown again.
 			if (!link.hasAttribute('data-href-genre')) {
 				link.setAttribute('data-href-genre', link.getAttribute('href'));
 				link.setAttribute('data-label-genre', link.textContent);
 			}
-			var label = toAllWorks ? link.getAttribute('data-label-all') : link.getAttribute('data-label-genre');
-			link.setAttribute('href', toAllWorks ? ALL_WORKS : link.getAttribute('data-href-genre'));
+			var href = link.getAttribute('data-href-genre');
+			var label = link.getAttribute('data-label-genre');
+			if (origin === ALL_WORKS) {
+				href = ALL_WORKS;
+				label = link.getAttribute('data-label-all');
+			} else if (tagLabel && (link.getAttribute('data-tag-lists') || '').split(' ').indexOf(origin) !== -1) {
+				href = origin;
+				label = tagLabel;
+			}
+			link.setAttribute('href', href);
 			if (label) link.textContent = label;
 		});
 	}

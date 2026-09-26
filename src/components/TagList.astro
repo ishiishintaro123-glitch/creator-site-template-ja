@@ -1,0 +1,50 @@
+---
+import { cleanTags, tagHref } from '../lib/tags';
+
+// A work's tags; each opens the list of works with that tag.
+interface Props {
+	tags: string[];
+}
+
+const tags = await Promise.all(cleanTags(Astro.props.tags).map(async (name) => ({ name, href: await tagHref(name) })));
+---
+
+{tags.length > 0 && (
+	<ul class="tags">
+		{tags.map((tag) => (
+			<li>{tag.href ? <a href={tag.href}>{tag.name}</a> : <span>{tag.name}</span>}</li>
+		))}
+	</ul>
+)}
+
+<style>
+	.tags {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.tags a,
+	.tags span {
+		display: block;
+		font-size: 0.75rem;
+		color: var(--text-muted);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 0.15rem 0.6rem;
+		overflow-wrap: anywhere;
+	}
+
+	/* Orange like every other link on the site, so readers can tell the tags can be pressed. */
+	.tags a {
+		color: var(--accent);
+	}
+
+	.tags a:hover {
+		text-decoration: none;
+		border-color: var(--accent);
+	}
+</style>

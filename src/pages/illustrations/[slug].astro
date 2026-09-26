@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import TagList from '../../components/TagList.astro';
 import { siteConfig, t } from '../../site-config.mjs';
 import { getIllustrations, type Illustration } from '../../lib/illustrations';
 
@@ -25,7 +26,7 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 	description={illustration.description || undefined}
 	wide
 	image={illustration.images[0]}
-	back={{ href: '/illustrations', label: t.backToIllustrationList, toList: true }}
+	back={{ href: '/illustrations', label: t.backToIllustrationList, toList: true, tags: illustration.tags }}
 >
 	<div class="images">
 		{illustration.images.map((image, index) => (
@@ -44,11 +45,9 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 		<p class="info__date">{dateFormatter.format(illustration.publishedAt)}</p>
 		{illustration.description && <p class="info__description">{illustration.description}</p>}
 		{illustration.tags.length > 0 && (
-			<ul class="info__tags">
-				{illustration.tags.map((tag) => (
-					<li>{tag}</li>
-				))}
-			</ul>
+			<div class="info__tags">
+				<TagList tags={illustration.tags} />
+			</div>
 		)}
 	</div>
 
@@ -104,20 +103,7 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 	}
 
 	.info__tags {
-		list-style: none;
-		margin: 1rem 0 0;
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
-	}
-
-	.info__tags li {
-		font-size: 0.75rem;
-		color: var(--text-muted);
-		border: 1px solid var(--border);
-		border-radius: 999px;
-		padding: 0.15rem 0.6rem;
+		margin-top: 1rem;
 	}
 
 	.illustration-ad {

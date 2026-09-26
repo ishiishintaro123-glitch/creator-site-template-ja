@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import MixedWorkList from '../../components/MixedWorkList.astro';
+import { t } from '../../site-config.mjs';
+import { getGenres } from '../../lib/catalog';
+import { getTags, type Tag } from '../../lib/tags';
+
+// Works of every genre that share a tag, opened by pressing the tag on a work.
+export async function getStaticPaths() {
+	return (await getTags()).map((tag) => ({ params: { slug: tag.slug }, props: { tag } }));
+}
+
+interface Props {
+	tag: Tag;
+}
+
+const { tag } = Astro.props;
+const title = t.tagPageTitle(tag.name);
+const genreLabels = (await getGenres()).length >= 2;
+---
+
+<Layout title={title} showAuthorLink showGenreNav>
+	<div hidden data-list-page={`/tags/${tag.slug}`} data-list-back-label={t.backToTag(tag.name)}></div>
+	<h1 class="page-title">{title}</h1>
+	<MixedWorkList items={tag.items} genreLabels={genreLabels} />
+</Layout>
+
+<style>
+	.page-title {
+		font-size: 1.4rem;
+		margin: 0 0 1.25rem;
+		overflow-wrap: anywhere;
+	}
+</style>

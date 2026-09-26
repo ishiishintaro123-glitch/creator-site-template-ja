@@ -3,6 +3,7 @@ import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import AdSlot from './AdSlot.astro';
+import TagList from './TagList.astro';
 import { siteConfig, t } from '../site-config.mjs';
 
 // A work's page with its table of contents; shared by novels and manga.
@@ -26,17 +27,15 @@ const { slug, episodes } = work;
 const dateFormatter = new Intl.DateTimeFormat(t.dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-<Layout title={work.title} description={work.synopsis || undefined} image={cover} back={{ href: backHref, label: backLabel, toList: true }}>
+<Layout title={work.title} description={work.synopsis || undefined} image={cover} back={{ href: backHref, label: backLabel, toList: true, tags: work.tags }}>
 	<header class:list={['work-header', { 'work-header--with-cover': cover }]}>
 		{cover && <Image src={cover} alt="" class="work-header__cover" widths={[240, 480]} sizes="240px" />}
 		<h1 class="work-header__title">{work.title}</h1>
 		{work.synopsis && <p class="work-header__synopsis">{work.synopsis}</p>}
 		{work.tags.length > 0 && (
-			<ul class="work-header__tags">
-				{work.tags.map((tag) => (
-					<li>{tag}</li>
-				))}
-			</ul>
+			<div class="work-header__tags">
+				<TagList tags={work.tags} />
+			</div>
 		)}
 	</header>
 
@@ -111,20 +110,7 @@ const dateFormatter = new Intl.DateTimeFormat(t.dateLocale, { year: 'numeric', m
 	}
 
 	.work-header__tags {
-		list-style: none;
-		margin: 0.75rem 0 0;
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
-	}
-
-	.work-header__tags li {
-		font-size: 0.75rem;
-		color: var(--text-muted);
-		border: 1px solid var(--border);
-		border-radius: 999px;
-		padding: 0.15rem 0.6rem;
+		margin-top: 0.75rem;
 	}
 
 	.continue-row {

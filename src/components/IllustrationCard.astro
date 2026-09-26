@@ -1,12 +1,14 @@
 ---
 import { Image } from 'astro:assets';
+import TagList from './TagList.astro';
 import { t } from '../site-config.mjs';
 import type { Illustration } from '../lib/illustrations';
 
 // An illustration in the all-works list, laid out like the novel and manga cards.
 interface Props {
 	illustration: Illustration;
-	genreLabel: string;
+	/** Genre name shown above the title; left out when the site has only one genre. */
+	genreLabel?: string;
 }
 
 const { illustration, genreLabel } = Astro.props;
@@ -20,8 +22,13 @@ const imageCount = illustration.images.length;
 		{imageCount > 1 && <span class="card__count">{t.imageCount(imageCount)}</span>}
 	</a>
 	<div>
-		<p class="card__genre">{genreLabel}</p>
+		{genreLabel && <p class="card__genre">{genreLabel}</p>}
 		<a href={href} class="card__title">{illustration.label}</a>
+		{illustration.tags.length > 0 && (
+			<div class="card__tags">
+				<TagList tags={illustration.tags} />
+			</div>
+		)}
 	</div>
 </li>
 
@@ -62,6 +69,10 @@ const imageCount = illustration.images.length;
 		aspect-ratio: 1;
 		object-fit: cover;
 		border-radius: 0.3rem;
+	}
+
+	.card__tags {
+		margin-top: 0.6rem;
 	}
 
 	.card__genre {
