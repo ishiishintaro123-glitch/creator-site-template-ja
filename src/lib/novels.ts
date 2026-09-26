@@ -23,6 +23,8 @@ export interface Work {
 	title: string;
 	synopsis: string;
 	tags: string[];
+	/** Marked finished, with every episode out (a scheduled last episode keeps it unfinished until then). */
+	completed: boolean;
 	cover?: ImageMetadata;
 	episodes: Episode[];
 	latestPublishedAt: Date;
@@ -69,6 +71,7 @@ async function load(): Promise<Work[]> {
 				title: entry.data.title,
 				synopsis: entry.data.synopsis,
 				tags: entry.data.tags,
+				completed: entry.data.completed && episodes.length === entry.data.episodes.length,
 				cover: entry.data.cover ? resolveImage(entry.data.cover, file) : undefined,
 				episodes,
 				latestPublishedAt: new Date(Math.max(0, ...episodes.map((episode) => episode.publishedAt.valueOf()))),

@@ -42,6 +42,10 @@ content:
         pattern:
           regex: '\S'
           message: 作品名を入力してください
+      - name: completed
+        label: 完結
+        description: チェックすると、作品一覧と目次に「完結」と表示されます。
+        type: boolean
       - name: synopsis
         label: あらすじ
         type: text
@@ -117,6 +121,10 @@ content:
         pattern:
           regex: '\S'
           message: 作品名を入力してください
+      - name: completed
+        label: 完結
+        description: チェックすると、作品一覧と目次に「完結」と表示されます。
+        type: boolean
       - name: synopsis
         label: あらすじ
         type: text

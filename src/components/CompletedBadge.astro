@@ -1,0 +1,22 @@
+---
+import { t } from '../site-config.mjs';
+
+// Marks a finished work. Ongoing works get no mark, so a creator who never ticks 「完結」 shows nothing wrong.
+---
+
+<span class="completed">{t.completed}</span>
+
+<style>
+	.completed {
+		display: inline-block;
+		flex-shrink: 0;
+		white-space: nowrap;
+		font-size: 0.75rem;
+		font-weight: 600;
+		line-height: 1.4;
+		color: var(--text-muted);
+		border: 1px solid var(--text-muted);
+		border-radius: 0.25rem;
+		padding: 0 0.4rem;
+	}
+</style>

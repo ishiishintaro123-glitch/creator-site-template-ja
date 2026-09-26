@@ -17,6 +17,8 @@ export interface Manga {
 	title: string;
 	synopsis: string;
 	tags: string[];
+	/** Marked finished, with every episode out (a scheduled last episode keeps it unfinished until then). */
+	completed: boolean;
 	cover: ImageMetadata;
 	episodes: MangaEpisode[];
 	latestPublishedAt: Date;
@@ -42,6 +44,7 @@ async function load(): Promise<Manga[]> {
 				title: entry.data.title,
 				synopsis: entry.data.synopsis,
 				tags: entry.data.tags,
+				completed: entry.data.completed && episodes.length === entry.data.episodes.length,
 				cover: entry.data.cover ? resolveImage(entry.data.cover, file) : episodes[0].pages[0],
 				episodes,
 				latestPublishedAt: new Date(Math.max(...episodes.map((episode) => episode.publishedAt.valueOf()))),

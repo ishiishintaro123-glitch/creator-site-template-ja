@@ -9,12 +9,15 @@ const oneLine = (text: string) => text.replace(/\s+/g, ' ').trim();
 const entry = (title: string, href: string, summary: string) =>
 	`- [${oneLine(title)}](${href})${summary ? `: ${oneLine(summary)}` : ''}`;
 
+const titleWithStatus = (work: { title: string; completed: boolean }) =>
+	work.completed ? `${work.title} (${t.completed})` : work.title;
+
 export const GET: APIRoute = async () => {
 	const [novels, manga, illustrations] = await Promise.all([getWorks(), getManga(), getIllustrations()]);
 	// Only genres that have works get a section.
 	const sections = [
-		[t.llmsNovelsHeading, novels.map((work) => entry(work.title, `/novels/${work.slug}/`, work.synopsis))],
-		[t.llmsMangaHeading, manga.map((work) => entry(work.title, `/manga/${work.slug}/`, work.synopsis))],
+		[t.llmsNovelsHeading, novels.map((work) => entry(titleWithStatus(work), `/novels/${work.slug}/`, work.synopsis))],
+		[t.llmsMangaHeading, manga.map((work) => entry(titleWithStatus(work), `/manga/${work.slug}/`, work.synopsis))],
 		[
 			t.llmsIllustrationsHeading,
 			illustrations.map((item) => entry(item.label, `/illustrations/${item.slug}/`, item.description)),
