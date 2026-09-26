@@ -44,6 +44,8 @@ const {
 
 const episodeLabel = t.episodeLabel(episode.number, episode.title);
 const pageTitle = t.episodePageTitle(work.title, episodeLabel);
+// Prefix the episode label so each episode's search snippet differs; a single-episode work keeps the plain synopsis.
+const description = work.synopsis && episodeCount > 1 ? t.episodeDescription(episodeLabel, work.synopsis) : work.synopsis || undefined;
 const shareText = `${work.title} ${episodeLabel}`;
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 const shareParams = new URLSearchParams({ text: shareText, url: pageUrl });
@@ -53,7 +55,7 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 
 <Layout
 	title={pageTitle}
-	description={work.synopsis || undefined}
+	description={description}
 	readingControls={readingControls}
 	wide={wide}
 	image={image}
