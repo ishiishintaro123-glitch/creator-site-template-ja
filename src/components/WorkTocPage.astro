@@ -73,6 +73,8 @@ const tagLists = await tagListPaths(work.tags, basePath === '/novels' ? 'novels'
 					<span class="episode-list__label">
 						{t.episodeNumber(episode.number)}{episode.title && <span class="episode-list__title">{episode.title}</span>}
 					</span>
+					{/* Shown by public/history.js on episodes added since the reader last read this work. */}
+					<span class="episode-list__new" data-new-mark hidden>{t.newEpisode}</span>
 					<span class="episode-list__date">{formatDate(episode.publishedAt)}</span>
 				</a>
 			</li>
@@ -190,6 +192,26 @@ const tagLists = await tagListPaths(work.tags, basePath === '/novels' ? 'novels'
 
 	.episode-list__title {
 		margin-left: 0.75em;
+	}
+
+	.episode-list__new {
+		flex-shrink: 0;
+		margin-left: auto;
+		font-size: 0.75rem;
+		font-weight: 700;
+		line-height: 1.4;
+		color: var(--bg);
+		background: var(--accent);
+		border-radius: 0.25rem;
+		padding: 0 0.4rem;
+	}
+
+	.episode-list__new[hidden] {
+		display: none;
+	}
+
+	.episode-list__new + .episode-list__date {
+		margin-left: 0.6rem;
 	}
 
 	.episode-list__date {

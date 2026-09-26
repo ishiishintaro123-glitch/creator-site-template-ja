@@ -51,6 +51,8 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 				{t.totalEpisodes(work.episodes.length)}
 			</span>
 			{work.completed && <CompletedBadge />}
+			{/* Filled in by public/history.js: episodes added since the reader last read this work. */}
+			<span class="novel-card__new" data-new-badge data-label={t.newEpisodesTemplate} hidden></span>
 		</a>
 		{work.synopsis && <p class="novel-card__synopsis" data-synopsis>{work.synopsis}</p>}
 		<button
@@ -149,6 +151,22 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 		font-size: 0.8rem;
 		font-weight: 600;
 		color: var(--text-muted);
+	}
+
+	.novel-card__new {
+		flex-shrink: 0;
+		white-space: nowrap;
+		font-size: 0.75rem;
+		font-weight: 700;
+		line-height: 1.4;
+		color: var(--bg);
+		background: var(--accent);
+		border-radius: 0.25rem;
+		padding: 0 0.4rem;
+	}
+
+	.novel-card__new[hidden] {
+		display: none;
 	}
 
 	.novel-card__synopsis {

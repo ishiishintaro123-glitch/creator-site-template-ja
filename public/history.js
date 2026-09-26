@@ -25,6 +25,7 @@
 		if (!marker) return;
 		var slug = marker.getAttribute('data-work-slug');
 		var episode = parseInt(marker.getAttribute('data-episode'), 10);
+		var episodeCount = parseInt(marker.getAttribute('data-episode-count'), 10) || 0;
 		if (!slug || !episode) return;
 
 		var history = loadHistory();
@@ -34,6 +35,8 @@
 		history[slug] = {
 			lastEpisode: existing && existing.lastEpisode > episode ? existing.lastEpisode : episode,
 			read: read,
+			// How many episodes the work had when the reader last read it; later ones are marked new.
+			knownEpisodes: Math.max((existing && existing.knownEpisodes) || 0, episodeCount),
 			updatedAt: Date.now(),
 		};
 		saveHistory(history);
@@ -48,6 +51,11 @@
 		return list;
 	}
 
+	// Entries saved before this was tracked have no knownEpisodes: nothing is marked new until the next read.
+	function isNew(entry, episode) {
+		return !!(entry && entry.knownEpisodes && episode > entry.knownEpisodes);
+	}
+
 	function markReadEpisodes() {
 		var rows = document.querySelectorAll('[data-toc-episode]');
 		if (!rows.length) return;
@@ -56,6 +64,8 @@
 			var entry = history[row.getAttribute('data-work-slug')];
 			var episode = parseInt(row.getAttribute('data-toc-episode'), 10);
 			if (readEpisodes(entry).indexOf(episode) !== -1) row.classList.add('is-read');
+			var mark = row.querySelector('[data-new-mark]');
+			if (mark && isNew(entry, episode)) mark.hidden = false;
 		});
 	}
 
@@ -74,6 +84,13 @@
 			var lastEpisode = Math.min(entry.lastEpisode, episodeCount);
 			var caughtUp = lastEpisode >= episodeCount;
 			var targetEpisode = caughtUp ? lastEpisode : lastEpisode + 1;
+
+			var badge = card.querySelector('[data-new-badge]');
+			var newCount = entry.knownEpisodes ? episodeCount - entry.knownEpisodes : 0;
+			if (badge && newCount > 0) {
+				badge.textContent = badge.getAttribute('data-label').replace('{n}', newCount);
+				badge.hidden = false;
+			}
 
 			var link = card.querySelector('[data-continue-link]');
 			if (link) {

@@ -63,7 +63,7 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 			: { href: basePath, label: backToListLabel, toList: true }
 	}
 >
-	<div hidden data-episode-marker data-work-slug={historyKey} data-episode={episode.number}></div>
+	<div hidden data-episode-marker data-work-slug={historyKey} data-episode={episode.number} data-episode-count={episodeCount}></div>
 	<header class="episode-header">
 		<h1 class="episode-header__title">{work.title}</h1>
 		<p class="episode-header__episode">{episodeLabel}</p>
