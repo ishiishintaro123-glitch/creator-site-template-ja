@@ -6,14 +6,16 @@ interface Props {
 	tags: string[];
 	/** The work's own genre, or 'all' in the all-works list (see TagScope). */
 	scope: TagScope;
+	/** Centered under a centered title (the illustration feed). */
+	center?: boolean;
 }
 
-const { scope } = Astro.props;
+const { scope, center = false } = Astro.props;
 const tags = await Promise.all(cleanTags(Astro.props.tags).map(async (name) => ({ name, href: await tagHref(name, scope) })));
 ---
 
 {tags.length > 0 && (
-	<ul class="tags">
+	<ul class:list={['tags', { 'tags--center': center }]}>
 		{tags.map((tag) => (
 			<li>{tag.href ? <a href={tag.href}>{tag.name}</a> : <span>{tag.name}</span>}</li>
 		))}
@@ -28,6 +30,10 @@ const tags = await Promise.all(cleanTags(Astro.props.tags).map(async (name) => (
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
+	}
+
+	.tags--center {
+		justify-content: center;
 	}
 
 	.tags a,

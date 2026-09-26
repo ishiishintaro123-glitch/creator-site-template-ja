@@ -1,10 +1,11 @@
 ---
 import { Image } from 'astro:assets';
+import TagList from './TagList.astro';
 import { t } from '../site-config.mjs';
 import type { Illustration } from '../lib/illustrations';
 
-// One illustration in the scrolling feed: the first image large, then the title. Multi-image posts show a count
-// and open on their own page for the rest.
+// One illustration in the scrolling feed: the first image large, then the title and tags. Multi-image posts show a
+// count and open on their own page for the rest.
 interface Props {
 	illustration: Illustration;
 	/** Load the image right away (for the first few); the rest load as the reader scrolls. */
@@ -30,6 +31,12 @@ const imageCount = illustration.images.length;
 		</span>
 		{illustration.title && <span class="feed-item__title">{illustration.title}</span>}
 	</a>
+	{/* Outside the link above: a tag is a link of its own. */}
+	{illustration.tags.length > 0 && (
+		<div class="feed-item__tags">
+			<TagList tags={illustration.tags} scope="illustrations" center />
+		</div>
+	)}
 </li>
 
 <style>
@@ -77,6 +84,10 @@ const imageCount = illustration.images.length;
 		margin-top: 0.6rem;
 		font-weight: 700;
 		overflow-wrap: anywhere;
+	}
+
+	.feed-item__tags {
+		margin-top: 0.6rem;
 	}
 
 	.feed-item__link:hover .feed-item__title {
