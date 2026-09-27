@@ -1,5 +1,5 @@
 import type { ImageMetadata } from 'astro';
-import { getCollection } from 'astro:content';
+import { getEntries } from './content';
 import { t } from '../site-config.mjs';
 import { resolveImage } from './media';
 import { releasedEpisodes } from './dates.mjs';
@@ -26,7 +26,7 @@ export interface Manga {
 
 // Manga (src/content/manga/<slug>.yaml) with their episodes, newest-updated first. Works with no episodes stay hidden.
 async function load(): Promise<Manga[]> {
-	const entries = await getCollection('manga');
+	const entries = await getEntries('manga');
 	return entries
 		.map((entry) => {
 			const file = `src/content/manga/${entry.id}.yaml`;

@@ -10,7 +10,8 @@ import yaml from 'js-yaml';
 import { siteConfig } from '../src/site-config.mjs';
 import { parseSiteDate, toSiteDateString } from '../src/lib/dates.mjs';
 
-const WORKS_DIR = 'src/content/novels';
+// Novels, and the later parts of novels too long for one file.
+const WORKS_DIRS = ['src/content/novels', 'src/content/novel-parts'];
 const IMPORT_DIR = 'src/content/import';
 
 // "第2話.md" before "第10話.md": compare the numbers in file names as numbers.
@@ -76,8 +77,14 @@ function resolveImportPath(path) {
 
 let importedTotal = 0;
 
-for (const fileName of readdirSync(WORKS_DIR).filter((name) => name.endsWith('.yaml'))) {
-	const workPath = join(WORKS_DIR, fileName);
+const workFiles = WORKS_DIRS.filter((dir) => existsSync(dir)).flatMap((dir) =>
+	readdirSync(dir)
+		.filter((name) => name.endsWith('.yaml'))
+		.map((name) => join(dir, name)),
+);
+
+for (const workPath of workFiles) {
+	const fileName = basename(workPath);
 	// CORE_SCHEMA keeps dates such as 2026-09-22 as plain strings, so they are written back exactly as Pages CMS
 	// saved them (the default schema would turn them into timestamps that Pages CMS's date field can't read).
 	const work = yaml.load(readFileSync(workPath, 'utf8'), { schema: yaml.CORE_SCHEMA }) ?? {};

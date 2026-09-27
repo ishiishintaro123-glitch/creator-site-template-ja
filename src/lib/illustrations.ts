@@ -1,5 +1,5 @@
 import type { ImageMetadata } from 'astro';
-import { getCollection } from 'astro:content';
+import { getEntries } from './content';
 import { t } from '../site-config.mjs';
 import { resolveImage } from './media';
 import { isReleased } from './dates.mjs';
@@ -19,7 +19,7 @@ export interface Illustration {
 
 // Illustrations (src/content/illustrations/<slug>.yaml), newest first.
 async function load(): Promise<Illustration[]> {
-	const entries = await getCollection('illustrations');
+	const entries = await getEntries('illustrations');
 	return entries
 		.filter((entry) => isReleased(entry.data.publishedAt)) // Scheduled for later: hidden until then.
 		.map((entry) => {

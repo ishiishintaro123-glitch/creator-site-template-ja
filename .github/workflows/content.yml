@@ -47,10 +47,14 @@ jobs:
       - name: Import uploaded manuscripts
         run: npm run import
 
-      # Push the imported episodes back so Pages CMS shows them for editing; the push makes Cloudflare build the
+      # Later parts of novels are named after their novel (scripts/name-novel-parts.mjs).
+      - name: Name novel parts
+        run: node scripts/name-novel-parts.mjs
+
+      # Push the imported episodes and part names back so Pages CMS shows them; the push makes Cloudflare build the
       # site again with them. Pushes made with the workflow's token don't start another workflow run, so this
       # doesn't loop.
-      - name: Save imported manuscripts
+      - name: Save imported manuscripts and part names
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -59,7 +63,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/content
-          git commit -m "Import manuscripts uploaded in Pages CMS"
+          git commit -m "Import manuscripts and name novel parts saved in Pages CMS"
           remote="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
           git pull --rebase "$remote" main
           git push "$remote" HEAD:main
@@ -83,6 +87,29 @@ jobs:
             else
               gh label create unused-images --color FBCA04 --description "使われていない画像" --force
               gh issue create --title "$title" --label unused-images --body-file "$RUNNER_TEMP/unused-images.md"
+            fi
+          elif [ -n "$existing" ]; then
+            gh issue close "$existing" --comment "$(jq -r .resolved <<<"$result")"
+          fi
+
+      # Nearing the free plans' limits (scripts/check-site-size.mjs): one issue, opened past 80% and closed once back
+      # under, like the unused images. Never fails the run.
+      - name: Report site size
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          result=$(node scripts/check-site-size.mjs)
+          existing=$(gh issue list --label site-size --state open --json number --jq '.[0].number')
+          if [ "$(jq -r .over <<<"$result")" = "true" ]; then
+            title=$(jq -r .title <<<"$result")
+            jq -r .body <<<"$result" > "$RUNNER_TEMP/site-size.md"
+            if [ -n "$existing" ]; then
+              gh issue edit "$existing" --title "$title" --body-file "$RUNNER_TEMP/site-size.md"
+            else
+              gh label create site-size --color FBCA04 --description "サイトの大きさ" --force
+              gh issue create --title "$title" --label site-size --body-file "$RUNNER_TEMP/site-size.md"
             fi
           elif [ -n "$existing" ]; then
             gh issue close "$existing" --comment "$(jq -r .resolved <<<"$result")"

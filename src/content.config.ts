@@ -24,6 +24,17 @@ const imagePath = z.string().trim().min(1);
 const imageList = (message: string) =>
 	z.preprocess((value) => (typeof value === 'string' ? [value] : value), z.array(imagePath, { error: message }).min(1, message));
 
+const novelEpisodes = z
+	.array(
+		z.object({
+			title: optionalText, // Optional episode subtitle
+			publishedAt: dateOn(t.episodeDateInvalid),
+			body: z.string({ error: t.episodeBodyNotSet }).trim().min(1, t.episodeBodyNotSet),
+		}),
+	)
+	.nullish()
+	.transform((value) => value ?? []);
+
 // Novels: one file per work with the work info and every episode: src/content/novels/<作品ID>.yaml
 // Episode numbers follow the order of the `episodes` list.
 const novels = defineCollection({
@@ -34,16 +45,19 @@ const novels = defineCollection({
 		cover: imagePath.nullish(), // Optional; without one, share cards use the site-wide image
 		completed, // Ticked when the work is finished
 		tags,
-		episodes: z
-			.array(
-				z.object({
-					title: optionalText, // Optional episode subtitle
-					publishedAt: dateOn(t.episodeDateInvalid),
-					body: z.string({ error: t.episodeBodyNotSet }).trim().min(1, t.episodeBodyNotSet),
-				}),
-			)
-			.nullish()
-			.transform((value) => value ?? []),
+		episodes: novelEpisodes,
+	}),
+});
+
+// Later parts of a novel too long for one file (Part 2, 3, ...): src/content/novel-parts/<ID>.yaml
+// Only the episodes; the work's settings stay in its first part. src/lib/novels.ts joins them to the work.
+const novelParts = defineCollection({
+	loader: glob({ pattern: '*.yaml', base: './src/content/novel-parts' }),
+	schema: z.object({
+		title: optionalText, // Only tells the parts apart in Pages CMS; filled in by scripts/name-novel-parts.mjs
+		work: z.string({ error: t.partWorkNotSet }).trim().min(1, t.partWorkNotSet), // As Pages CMS saves it: src/content/novels/<作品ID>.yaml
+		part: z.coerce.number({ error: t.partNumberInvalid }).int(t.partNumberInvalid).min(2, t.partNumberInvalid),
+		episodes: novelEpisodes,
 	}),
 });
 
@@ -81,4 +95,4 @@ const illustrations = defineCollection({
 	}),
 });
 
-export const collections = { novels, manga, illustrations };
+export const collections = { novels, novelParts, manga, illustrations };

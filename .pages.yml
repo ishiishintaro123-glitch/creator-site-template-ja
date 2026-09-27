@@ -37,15 +37,11 @@ content:
     fields:
       - name: title
         label: 作品名
-        description: 1作品は約30万字までです。超えそうになったら「第2部」として新しい作品を作ってください。
+        description: 1作品は全話を合わせて約30万字までです。超えそうになったら「小説（第2部以降）」で第2部を作ってください。
         type: string
         pattern:
           regex: '\S'
           message: 作品名を入力してください
-      - name: completed
-        label: 完結
-        description: チェックすると、作品一覧と目次に「完結」と表示されます。
-        type: boolean
       - name: synopsis
         label: あらすじ
         type: text
@@ -57,7 +53,7 @@ content:
         description: >-
           作品一覧と目次に表示されます。この作品のリンクがXやLINEなどに貼られたときの画像にもなります。縦長（3:4）がおすすめです。
           空欄なら表紙なしで表示され、リンクが貼られたときはサイト設定の「リンクが貼られたときの画像」が使われます。
-        type: file
+        type: image
         options:
           media: images
           path: novels
@@ -101,6 +97,110 @@ content:
         label: タグ
         type: string
         list: true
+      - name: completed
+        label: 完結
+        description: チェックすると、作品一覧と目次に「完結」と表示されます。
+        type: boolean
+
+  - name: novel-parts
+    label: 小説（第2部以降）
+    type: collection
+    path: src/content/novel-parts
+    format: yaml
+    subfolders: false
+    filename:
+      template: "{year}{month}{day}-{hour}{minute}{second}.yaml"
+      field: create
+    view:
+      primary: title
+      fields: [title]
+    fields:
+      - name: work
+        label: 作品
+        description: どの作品の続きかを選びます。サイトではその作品の目次の続きに表示され、話数も続きの番号になります。
+        type: reference
+        options:
+          collection: works
+          search: title
+          value: "{path}"
+          label: "{primary}"
+        required: true
+      - name: part
+        label: 第何部
+        type: select
+        options:
+          values:
+            - { value: 2, label: 第2部 }
+            - { value: 3, label: 第3部 }
+            - { value: 4, label: 第4部 }
+            - { value: 5, label: 第5部 }
+            - { value: 6, label: 第6部 }
+            - { value: 7, label: 第7部 }
+            - { value: 8, label: 第8部 }
+            - { value: 9, label: 第9部 }
+            - { value: 10, label: 第10部 }
+            - { value: 11, label: 第11部 }
+            - { value: 12, label: 第12部 }
+            - { value: 13, label: 第13部 }
+            - { value: 14, label: 第14部 }
+            - { value: 15, label: 第15部 }
+            - { value: 16, label: 第16部 }
+            - { value: 17, label: 第17部 }
+            - { value: 18, label: 第18部 }
+            - { value: 19, label: 第19部 }
+            - { value: 20, label: 第20部 }
+            - { value: 21, label: 第21部 }
+            - { value: 22, label: 第22部 }
+            - { value: 23, label: 第23部 }
+            - { value: 24, label: 第24部 }
+            - { value: 25, label: 第25部 }
+            - { value: 26, label: 第26部 }
+            - { value: 27, label: 第27部 }
+            - { value: 28, label: 第28部 }
+            - { value: 29, label: 第29部 }
+            - { value: 30, label: 第30部 }
+        required: true
+      - name: title
+        label: 名前
+        description: 保存してから1〜2分で「作品名 第〇部」が自動で入ります（この一覧で見分けるための名前で、サイトには表示されません）。
+        type: string
+        readonly: true
+      - name: episodes
+        label: 目次
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "この部の第{index}話 {fields.title}"
+        fields:
+          - name: title
+            label: 話のタイトル（任意）
+            type: string
+          - name: publishedAt
+            label: 公開日時
+            description: 未来の日時にすると、その時刻に自動で公開されます（1時間ほど遅れることがあります）。
+            type: date
+            options:
+              time: true
+          - name: body
+            label: 本文
+            description: 改行はそのまま表示されます。空行を入れると段落の区切りになります。
+            type: text
+            pattern:
+              regex: '\S'
+              message: 本文を入力してください
+      - name: import
+        label: 原稿をまとめて取り込む
+        description: >-
+          .md・.txt のファイルが使えます。【今はファイルを1つずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1つしか残りません（修正待ち）。
+          選んだファイルは、ファイル名の番号順（第1話、第2話…第10話）に目次の最後へ追加されます。
+          原稿の1行目が「# タイトル」なら話のタイトルになります。公開日は取り込んだ日になります。あとから各話の公開日の欄で変えられます。
+          保存してから1〜2分で目次に入り、そのあとは本文を直接直せます。取り込みが終わるまで、この部は編集しないでください。
+        type: file
+        options:
+          media: import
+          multiple: true
+          extensions: [md, txt]
 
   - name: manga
     label: 漫画
@@ -121,17 +221,13 @@ content:
         pattern:
           regex: '\S'
           message: 作品名を入力してください
-      - name: completed
-        label: 完結
-        description: チェックすると、作品一覧と目次に「完結」と表示されます。
-        type: boolean
       - name: synopsis
         label: あらすじ
         type: text
       - name: cover
         label: 表紙の画像
         description: この作品のリンクがXやLINEなどに貼られたときの画像にもなります。空欄なら第1話の1ページ目が表紙になります。
-        type: file
+        type: image
         options:
           media: images
           path: manga
@@ -155,10 +251,10 @@ content:
           - name: pages
             label: この話のページ
             description: >-
-              一番上が1ページ目です。「Upload」で1枚ずつ追加すると、アップロードした順に下へ並びます。2ページ目以降も、この「Upload」で追加します。
+              2ページ目以降も、この「Upload」で追加します。
               【今は画像を1枚ずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1枚しか残りません（修正待ち）。
               並び順は左のつまみで入れ替えられます。PNG・JPEG・WebP、1枚4.5MBまで。
-            type: file
+            type: image
             options:
               media: images
               path: manga
@@ -167,6 +263,10 @@ content:
         label: タグ
         type: string
         list: true
+      - name: completed
+        label: 完結
+        description: チェックすると、作品一覧と目次に「完結」と表示されます。
+        type: boolean
 
   - name: illustrations
     label: イラスト
@@ -178,8 +278,8 @@ content:
       template: "{year}{month}{day}-{hour}{minute}{second}.yaml"
       field: create
     view:
-      primary: title
-      fields: [title, publishedAt]
+      primary: images
+      fields: [images, title, publishedAt]
       default:
         sort: publishedAt
         order: desc
@@ -189,7 +289,7 @@ content:
         description: >-
           【今は画像を1枚ずつ選んでください】Pages CMSの不具合で、一度に複数選ぶと1枚しか残りません（修正待ち）。
           PNG・JPEG・WebP、1枚4.5MBまで。
-        type: file
+        type: image
         options:
           media: images
           path: illustrations
@@ -271,7 +371,7 @@ content:
           このサイトのページのリンクがXやLINEなどに貼られたときに、大きく表示される画像です（サイト共通の1枚）。
           横長の1200×630ピクセルがおすすめです（縦長の画像は、ぼかした背景の中央に全体が収まるよう自動で並べ直されます）。PNG・JPEG・WebP、4.5MBまで。
           表紙のある小説や、漫画・イラストのページでは、その作品の画像が優先されます。空欄なら画像なしの小さな表示になります。
-        type: file
+        type: image
         options:
           media: images
           path: site

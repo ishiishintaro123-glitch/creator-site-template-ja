@@ -1,6 +1,7 @@
 import type { ImageMetadata } from 'astro';
 import { statSync } from 'node:fs';
-import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { getEntries } from './content';
 import { markdownToHtml } from 'satteri';
 import { lineBreaks } from '../markdown/line-breaks.mjs';
 import { safeContent } from '../markdown/safe-content.mjs';
@@ -12,6 +13,8 @@ import { releasedEpisodes } from './dates.mjs';
 export interface Episode {
 	id: string;
 	number: number;
+	/** Which part of the work (1, 2, ...) the episode is in; see partsByWork below. */
+	part: number;
 	/** Optional episode subtitle; empty string when not set. */
 	title: string;
 	publishedAt: Date;
@@ -43,24 +46,56 @@ async function renderEpisode(body: string) {
 	return html.replace(/<a href="(https?:\/\/[^"]*)"/g, '<a href="$1" target="_blank" rel="noopener"');
 }
 
+// The work ID a part's `work` names. Pages CMS saves the file's path; the bare ID is accepted too.
+function workIdOf(value: string) {
+	return value.replace(/^.*\//, '').replace(/\.yaml$/, '');
+}
+
+function checkFile(entry: CollectionEntry<'novels' | 'novelParts'>, file: string, title: string) {
+	if (!/^[a-z0-9][a-z0-9-]*$/.test(entry.id)) throw new Error(t.workIdInvalid(file));
+	if (entry.filePath && statSync(entry.filePath).size > MAX_WORK_FILE_BYTES) throw new Error(t.workTooLarge(title, file));
+}
+
+// A work too long for one file (see MAX_WORK_FILE_BYTES) goes on in parts (src/content/novel-parts/), each naming
+// its work and part number. They are shown as one work under the work's ID and settings, numbered straight through.
+async function partsByWork(works: CollectionEntry<'novels'>[]) {
+	const titles = new Map(works.map((work) => [work.id, work.data.title]));
+	const byWork = new Map<string, CollectionEntry<'novelParts'>[]>();
+	for (const entry of await getEntries('novelParts')) {
+		const file = `src/content/novel-parts/${entry.id}.yaml`;
+		const workId = workIdOf(entry.data.work);
+		const title = titles.get(workId);
+		if (title === undefined) throw new Error(t.partWorkNotFound(file));
+		checkFile(entry, file, t.partTitle(title, entry.data.part));
+		const parts = byWork.get(workId) ?? [];
+		const same = parts.find((part) => part.data.part === entry.data.part);
+		if (same) throw new Error(t.partNumberTaken(title, entry.data.part, `src/content/novel-parts/${same.id}.yaml`, file));
+		byWork.set(workId, [...parts, entry]);
+	}
+	for (const parts of byWork.values()) parts.sort((a, b) => a.data.part - b.data.part);
+	return byWork;
+}
+
 // Works (src/content/novels/<slug>.yaml) with their episodes, newest-updated work first.
 // Mistakes a creator can make fail the build with a message saying what to fix.
 async function load(): Promise<Work[]> {
-	const entries = await getCollection('novels');
+	const entries = await getEntries('novels');
+	for (const entry of entries) checkFile(entry, `src/content/novels/${entry.id}.yaml`, entry.data.title);
+	const laterParts = await partsByWork(entries);
 
 	const works = await Promise.all(
 		entries.map(async (entry) => {
 			const file = `src/content/novels/${entry.id}.yaml`;
-			if (!/^[a-z0-9][a-z0-9-]*$/.test(entry.id)) {
-				throw new Error(t.workIdInvalid(file));
-			}
-			if (entry.filePath && statSync(entry.filePath).size > MAX_WORK_FILE_BYTES) {
-				throw new Error(t.workTooLarge(entry.data.title, file));
-			}
+			// Released episodes stop at the first scheduled one across all parts, so numbers never shift.
+			const all = [
+				...entry.data.episodes.map((episode) => ({ ...episode, part: 1 })),
+				...(laterParts.get(entry.id) ?? []).flatMap((part) => part.data.episodes.map((episode) => ({ ...episode, part: part.data.part }))),
+			];
 			const episodes = await Promise.all(
-				releasedEpisodes(entry.data.episodes).map(async (episode, index) => ({
+				releasedEpisodes(all).map(async (episode, index) => ({
 					id: `${entry.id}/${index + 1}`,
 					number: index + 1,
+					part: episode.part,
 					title: episode.title,
 					publishedAt: episode.publishedAt,
 					html: await renderEpisode(episode.body),
@@ -71,7 +106,7 @@ async function load(): Promise<Work[]> {
 				title: entry.data.title,
 				synopsis: entry.data.synopsis,
 				tags: entry.data.tags,
-				completed: entry.data.completed && episodes.length === entry.data.episodes.length,
+				completed: entry.data.completed && episodes.length === all.length,
 				cover: entry.data.cover ? resolveImage(entry.data.cover, file) : undefined,
 				episodes,
 				latestPublishedAt: new Date(Math.max(0, ...episodes.map((episode) => episode.publishedAt.valueOf()))),
