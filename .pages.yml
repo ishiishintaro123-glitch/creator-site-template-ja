@@ -388,7 +388,7 @@ content:
     fields:
       - name: author
         label: 作者名
-        description: トップページ左上の作者ページへのリンク、作者ページの見出し、各ページ下の著作権表示（© 年 作者名）に表示されます。
+        description: トップページ左上の作者ページへのリンク、作者ページの見出し、各ページの一番下に表示されます。
         type: string
         pattern:
           regex: '\S'
@@ -405,7 +405,7 @@ content:
         fields:
           - name: note
             label: リンクの上に表示する文（任意）
-            description: 例：「〇〇の購入は下のサイトから」
+            description: 例：「〇〇の購入は下のリンクから」
             type: string
           - name: url
             label: リンク先
