@@ -1,7 +1,9 @@
 ---
-import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ImageViewer from '../../components/ImageViewer.astro';
 import TagList from '../../components/TagList.astro';
 import { tagListPaths } from '../../lib/tags';
 import { formatDate } from '../../lib/format-date';
@@ -15,6 +17,10 @@ export async function getStaticPaths() {
 
 const { illustration } = Astro.props as { illustration: Illustration };
 const alt = illustration.title || illustration.description || t.illustrationAlt;
+
+// Each image, pressed, opens whole and large (ImageViewer), using the same files as the page.
+const imageOptions = (image: ImageMetadata) => ({ widths: [480, 800, 1200, 1600], width: Math.min(1600, image.width) });
+const large = await Promise.all(illustration.images.map((image) => getImage({ src: image, ...imageOptions(image) })));
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 // X's link card shows only the first image, so say how many there are.
@@ -34,14 +40,17 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 >
 	<div class="images">
 		{illustration.images.map((image, index) => (
-			<Image
-				src={image}
-				alt={alt}
-				widths={[480, 800, 1200, 1600]}
-				width={Math.min(1600, image.width)}
-				sizes="(min-width: 60rem) 60rem, 100vw"
-				loading={index === 0 ? 'eager' : 'lazy'}
-			/>
+			<button
+				type="button"
+				class="images__open"
+				aria-label={t.imageOpen}
+				data-viewer-open
+				data-src={large[index].src}
+				data-srcset={large[index].srcSet.attribute}
+				data-alt={alt}
+			>
+				<Image src={image} alt={alt} {...imageOptions(image)} sizes="(min-width: 60rem) 60rem, 100vw" loading={index === 0 ? 'eager' : 'lazy'} />
+			</button>
 		))}
 	</div>
 
@@ -56,15 +65,18 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 		)}
 	</div>
 
+	<ImageViewer />
+
+	<a class="share-button" href={shareHref} target="_blank" rel="noopener noreferrer">
+		{t.shareOnX}
+	</a>
+
+	{/* The ad comes last, as on a chapter page, so sharing comes first. */}
 	{siteConfig.ads?.afterEpisode && (
 		<div class="illustration-ad">
 			<AdSlot code={siteConfig.ads.afterEpisode} />
 		</div>
 	)}
-
-	<a class="share-button" href={shareHref} target="_blank" rel="noopener noreferrer">
-		{t.shareOnX}
-	</a>
 </Layout>
 
 <style>
@@ -73,6 +85,15 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 		flex-direction: column;
 		align-items: center;
 		gap: 1rem;
+	}
+
+	.images__open {
+		display: block;
+		max-width: 100%;
+		padding: 0;
+		border: 0;
+		background: none;
+		cursor: zoom-in;
 	}
 
 	.images img {
@@ -111,9 +132,10 @@ const shareHref = `https://twitter.com/intent/tweet?${shareParams}`;
 		margin-top: 1rem;
 	}
 
+	/* Generous spacing keeps the ad visually separate from the button above (ad networks prohibit placements that invite accidental clicks). */
 	.illustration-ad {
 		max-width: 42rem;
-		margin: 3rem auto;
+		margin: 3rem auto 0;
 	}
 
 	.share-button {

@@ -53,9 +53,10 @@ blockAi: false
 #
 # provider: 広告サービス名（プライバシーポリシーに表示されます）
 # providerPrivacyUrl: 広告サービスのプライバシーポリシーのURL（分かれば。https:// から始まるもの）
-# placements: 広告の表示場所。次の4つの欄にコードを貼ります
+# placements: 広告の表示場所。次の5つの欄にコードを貼ります
 #   afterEpisode: 各話の一番下（「次の話」とXでシェアするボタンの下。おすすめ）
 #   sidebar: PCで見たときの本文の右側の余白（スクロールしても付いてきます。画面の狭いスマホでは表示されません）
+#   sidebarLeft: PCで見たときの本文の左側の余白（右側と同じ。両方に貼ると本文が広告に挟まれるので、どちらか片方がおすすめです）
 #   workToc: 作品の目次の下
 #   listFeed: 作品一覧で、作品5つごとの間
 # adsTxt: 広告サービスから ads.txt の設置を求められた場合、その内容を貼ってください（不要なら空欄）
@@ -77,6 +78,7 @@ ads:
   placements:
     afterEpisode: ""
     sidebar: ""
+    sidebarLeft: ""
     workToc: ""
     listFeed: ""
   adsTxt: ""

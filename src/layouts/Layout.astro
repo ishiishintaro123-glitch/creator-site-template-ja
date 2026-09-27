@@ -158,6 +158,11 @@ const currentPath = currentTab ?? (Astro.url.pathname.replace(/\/+$/, '') || '/'
 				<AdSlot code={siteConfig.ads.sidebar} />
 			</div>
 		)}
+		{siteConfig.ads?.sidebarLeft && !wide && (
+			<div class="sidebar-ad sidebar-ad--left">
+				<AdSlot code={siteConfig.ads.sidebarLeft} />
+			</div>
+		)}
 		<footer class="site-footer">
 			<div class:list={['wrap site-footer__inner', { 'wrap--wide': wide }]}>
 				<span>&copy; {new Date().getFullYear()} {siteConfig.author}</span>
@@ -408,7 +413,8 @@ const currentPath = currentTab ?? (Astro.url.pathname.replace(/\/+$/, '') || '/'
 		padding-bottom: 3rem;
 	}
 
-	/* Right-hand margin ad for wide screens only: placed beside the 42rem text column so it never overlaps the text. */
+	/* Margin ads for wide screens only (right, and left if the creator adds one): placed beside the 42rem text column
+	   so they never overlap the text. */
 	.sidebar-ad {
 		display: none;
 	}
@@ -420,6 +426,11 @@ const currentPath = currentTab ?? (Astro.url.pathname.replace(/\/+$/, '') || '/'
 			top: 6rem;
 			left: calc(50% + 21rem + 2rem);
 			width: 300px;
+		}
+
+		.sidebar-ad--left {
+			left: auto;
+			right: calc(50% + 21rem + 2rem);
 		}
 	}
 

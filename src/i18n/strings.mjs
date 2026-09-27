@@ -64,6 +64,10 @@ const ja = {
 	startReading: '1話から読む',
 	continueReadingTemplate: '続きを読む（第{n}話から）',
 	readAgainTemplate: '読み返す（第{n}話）',
+	coverOpen: '表紙を大きく表示',
+	coverAlt: (title) => `「${title}」の表紙`,
+	viewerClose: '閉じる',
+	imageOpen: '画像を大きく表示',
 
 	// Work, episode and author pages
 	backToNovelList: '← 小説一覧に戻る',
@@ -195,6 +199,10 @@ const en = {
 	startReading: 'Start reading',
 	continueReadingTemplate: 'Continue reading (Chapter {n})',
 	readAgainTemplate: 'Read again (Chapter {n})',
+	coverOpen: 'View the cover larger',
+	coverAlt: (title) => `Cover of ${title}`,
+	viewerClose: 'Close',
+	imageOpen: 'View the image larger',
 
 	backToNovelList: '← All novels',
 	backToToc: '← Contents',

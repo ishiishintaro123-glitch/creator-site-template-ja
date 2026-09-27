@@ -9,7 +9,7 @@ import { isTimeZone } from './lib/dates.mjs';
 const CONFIG_FILE = 'site.config.yaml';
 
 // Where ads can go. Spots that hurt reading (above/inside the text, sticky overlays, interstitials) are deliberately not offered.
-const AD_SLOTS = ['afterEpisode', 'sidebar', 'workToc', 'listFeed'];
+const AD_SLOTS = ['afterEpisode', 'sidebar', 'sidebarLeft', 'workToc', 'listFeed'];
 const adCode = z.string().nullish().transform((value) => (value ?? '').trim());
 
 // Error messages follow the site's language, so the schema is built once the language is known.
@@ -81,6 +81,7 @@ function buildSchema(t) {
 						.refine((value) => value === '' || /^https:\/\/\S+$/.test(value), { error: t.providerPrivacyUrlInvalid }),
 					afterEpisode: adCode,
 					sidebar: adCode,
+					sidebarLeft: adCode,
 					workToc: adCode,
 					listFeed: adCode,
 					adsTxt: z.string().nullish().transform((value) => (value ?? '').trim()),

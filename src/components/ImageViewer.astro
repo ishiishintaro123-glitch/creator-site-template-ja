@@ -1,0 +1,60 @@
+---
+import { t } from '../site-config.mjs';
+
+// Shows an image whole and large over the page when a button marked data-viewer-open is pressed (public/image-viewer.js).
+// Each button carries the large image in data-src / data-srcset / data-alt; one viewer serves every button on the page.
+---
+
+<dialog class="image-viewer" data-image-viewer>
+	<img class="image-viewer__image" alt="" sizes="100vw" />
+	<button type="button" class="image-viewer__close" aria-label={t.viewerClose}>×</button>
+</dialog>
+<script src="/image-viewer.js" is:inline defer></script>
+
+<style>
+	/* The whole image over a dark backdrop; tapping anywhere closes it. */
+	.image-viewer {
+		width: 100vw;
+		height: 100dvh;
+		max-width: none;
+		max-height: none;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: zoom-out;
+	}
+
+	.image-viewer[open] {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.image-viewer::backdrop {
+		background: rgb(0 0 0 / 0.88);
+	}
+
+	.image-viewer__image {
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+	}
+
+	/* Top left, where the site's other ways back are. */
+	.image-viewer__close {
+		position: fixed;
+		top: 0.75rem;
+		left: 0.75rem;
+		width: 2.75rem;
+		height: 2.75rem;
+		border: 0;
+		border-radius: 50%;
+		background: rgb(0 0 0 / 0.55);
+		/* The dark theme's accent in both themes: the backdrop is always dark, and the light theme's is too dim on it. */
+		color: #d9835a;
+		font-size: 1.6rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+</style>

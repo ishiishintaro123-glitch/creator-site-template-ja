@@ -16,7 +16,7 @@ const WARN_AT = 0.8;
 
 // Files built per image, from the widths each is shown at (plus a share card image for covers and illustrations).
 const FILES_PER_MANGA_PAGE = 3; // Three widths (src/integrations/prune-images.mjs drops the original)
-const FILES_PER_COVER = 5;
+const FILES_PER_COVER = 7; // List card, work page, the large view when tapped (a width shared with the work page) and the share card
 const FILES_PER_ILLUSTRATION = 9; // First image of a post: also its tile and card
 const FILES_PER_EXTRA_ILLUSTRATION = 4;
 const FIXED_FILES = 50; // Fonts, scripts, styles, lists, tag pages and the like

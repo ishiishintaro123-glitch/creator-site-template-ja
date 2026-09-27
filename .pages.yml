@@ -485,6 +485,11 @@ content:
                 type: code
                 options:
                   format: html
+              - name: sidebarLeft
+                label: PCで見たときの本文の左側の余白
+                type: code
+                options:
+                  format: html
               - name: workToc
                 label: 作品の目次の下
                 type: code

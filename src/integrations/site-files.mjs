@@ -26,9 +26,12 @@ const adsCsp = [
 	"style-src 'self' 'unsafe-inline' https:",
 	"font-src 'self' https: data:",
 	'media-src https: data: blob:',
-	"script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+	// blob: too: some ad and ad-measurement scripts load code they've built in the page this way (tested 2026-09-27:
+	// without it, blob: scripts and workers were blocked).
+	"script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:",
+	"worker-src 'self' blob:",
 	"connect-src 'self' https:",
-	'frame-src https: data:',
+	'frame-src https: data: blob:',
 	"object-src 'none'",
 	"base-uri 'none'",
 	"frame-ancestors 'none'",
