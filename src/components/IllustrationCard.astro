@@ -21,7 +21,7 @@ const imageCount = illustration.images.length;
 
 <li class="card">
 	<a href={href} class="card__image-link" tabindex="-1" aria-hidden="true">
-		<Image src={illustration.images[0]} alt="" widths={[160, 320]} sizes="160px" class="card__image" />
+		<Image src={illustration.images[0]} alt="" widths={[160, 320]} width={Math.min(320, illustration.images[0].width)} sizes="160px" class="card__image" />
 		{imageCount > 1 && <span class="card__count">{t.imageCount(imageCount)}</span>}
 	</a>
 	<div>

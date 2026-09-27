@@ -1,6 +1,6 @@
 // Publish dates as creators write them, on the site's clock (siteConfig.timeZone), not the build server's (UTC).
 // Pages CMS saves "2026-09-27T18:00"; older files and hand-written ones may have just "2026-09-27" (midnight).
-// Shared by the site build and scripts/ (the manuscript import and the scheduled-publish check).
+// Shared by the site build and scripts/ (the manuscript import).
 
 const PATTERN = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?$/;
 

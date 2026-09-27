@@ -1,10 +1,16 @@
 // Cloudflare Workers settings. Cloudflare (Workers Builds) runs `npm run build` and then `npx wrangler deploy`,
-// which publishes the built site in dist/ as static files (no server code).
+// which publishes the built site in dist/ as static files, plus a small script for scheduled publishing.
 {
   "name": "creator-site",
   "compatibility_date": "2026-09-01",
+  // Scheduled publishing only (worker/index.js); everything else is served straight from dist/.
+  "main": "worker/index.js",
+  "triggers": { "crons": ["*/5 * * * *"] },
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    // schedule.json is for the cron above only; the script answers requests for it with a 404.
+    "run_worker_first": ["/schedule.json"],
     // /novels opens /novels/ (Astro writes each page as <path>/index.html).
     "html_handling": "auto-trailing-slash",
     // Addresses with no page get dist/404.html (src/pages/404.astro) with a 404 status.

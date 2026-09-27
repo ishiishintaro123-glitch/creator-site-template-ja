@@ -35,8 +35,9 @@
 		history[slug] = {
 			lastEpisode: existing && existing.lastEpisode > episode ? existing.lastEpisode : episode,
 			read: read,
-			// How many episodes the work had when the reader last read it; later ones are marked new.
-			knownEpisodes: Math.max((existing && existing.knownEpisodes) || 0, episodeCount),
+			// How many episodes the work had when the reader first read it. Later ones are marked new until the
+			// reader opens each of them (see isNew), so rereading an old episode doesn't clear the marks.
+			knownEpisodes: (existing && existing.knownEpisodes) || episodeCount,
 			updatedAt: Date.now(),
 		};
 		saveHistory(history);
@@ -51,9 +52,10 @@
 		return list;
 	}
 
-	// Entries saved before this was tracked have no knownEpisodes: nothing is marked new until the next read.
+	// An episode added after the reader started the work that they haven't opened yet. Entries saved before this
+	// was tracked have no knownEpisodes: nothing is marked new until the next read.
 	function isNew(entry, episode) {
-		return !!(entry && entry.knownEpisodes && episode > entry.knownEpisodes);
+		return !!(entry && entry.knownEpisodes && episode > entry.knownEpisodes && readEpisodes(entry).indexOf(episode) === -1);
 	}
 
 	function markReadEpisodes() {
@@ -86,7 +88,8 @@
 			var targetEpisode = caughtUp ? lastEpisode : lastEpisode + 1;
 
 			var badge = card.querySelector('[data-new-badge]');
-			var newCount = entry.knownEpisodes ? episodeCount - entry.knownEpisodes : 0;
+			var newCount = 0;
+			for (var n = 1; n <= episodeCount; n++) if (isNew(entry, n)) newCount++;
 			if (badge && newCount > 0) {
 				badge.textContent = badge.getAttribute('data-label').replace('{n}', newCount);
 				badge.hidden = false;

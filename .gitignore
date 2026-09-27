@@ -23,5 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# Wrangler (Cloudflare) local state
+# Wrangler (Cloudflare) local state, and local copies of secrets such as DEPLOY_HOOK_URL
 .wrangler/
+.dev.vars

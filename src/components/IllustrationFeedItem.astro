@@ -17,33 +17,45 @@ const imageCount = illustration.images.length;
 ---
 
 <li class="feed-item">
-	<a href={`/illustrations/${illustration.slug}`} class="feed-item__link">
-		<span class="feed-item__frame">
-			<Image
-				src={illustration.images[0]}
-				alt={illustration.title || illustration.description || t.illustrationAlt}
-				widths={[480, 800, 1200, 1600]}
-				sizes="(min-width: 60rem) 60rem, 100vw"
-				loading={eager ? 'eager' : 'lazy'}
-				class="feed-item__image"
-			/>
-			{imageCount > 1 && <span class="feed-item__count">{t.imageCount(imageCount)}</span>}
-		</span>
-		{illustration.title && <span class="feed-item__title">{illustration.title}</span>}
-	</a>
-	{/* Outside the link above: a tag is a link of its own. */}
-	{illustration.tags.length > 0 && (
-		<div class="feed-item__tags">
-			<TagList tags={illustration.tags} scope="illustrations" center />
-		</div>
-	)}
+	{/* As wide as the picture, centered; the title and tags below line up with its left edge. */}
+	<div class="feed-item__body">
+		<a href={`/illustrations/${illustration.slug}`} class="feed-item__link">
+			<span class="feed-item__frame">
+				<Image
+					src={illustration.images[0]}
+					alt={illustration.title || illustration.description || t.illustrationAlt}
+					widths={[480, 800, 1200, 1600]}
+					width={Math.min(1600, illustration.images[0].width)}
+					sizes="(min-width: 60rem) 60rem, 100vw"
+					loading={eager ? 'eager' : 'lazy'}
+					class="feed-item__image"
+				/>
+				{imageCount > 1 && <span class="feed-item__count">{t.imageCount(imageCount)}</span>}
+			</span>
+			{illustration.title && <span class="feed-item__title">{illustration.title}</span>}
+		</a>
+		{/* Outside the link above: a tag is a link of its own. */}
+		{illustration.tags.length > 0 && (
+			<div class="feed-item__tags">
+				<TagList tags={illustration.tags} scope="illustrations" />
+			</div>
+		)}
+	</div>
 </li>
 
 <style>
-	.feed-item__link {
+	.feed-item {
 		display: flex;
-		flex-direction: column;
-		align-items: center;
+		justify-content: center;
+	}
+
+	.feed-item__body {
+		min-width: 0;
+		max-width: 100%;
+	}
+
+	.feed-item__link {
+		display: block;
 		color: var(--accent);
 	}
 
@@ -80,7 +92,15 @@ const imageCount = illustration.images.length;
 		padding: 0.15rem 0.6rem;
 	}
 
+	/* width: 0 keeps text from widening the column past the picture; min-width: 100% then fills it. */
+	.feed-item__title,
+	.feed-item__tags {
+		width: 0;
+		min-width: 100%;
+	}
+
 	.feed-item__title {
+		display: block;
 		margin-top: 0.6rem;
 		font-weight: 700;
 		overflow-wrap: anywhere;

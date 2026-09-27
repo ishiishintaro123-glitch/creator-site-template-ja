@@ -18,6 +18,7 @@ const imageCount = illustration.images.length;
 			src={illustration.images[0]}
 			alt={illustration.title || illustration.description || t.illustrationAlt}
 			widths={[240, 480, 720]}
+			width={Math.min(720, illustration.images[0].width)}
 			sizes="(min-width: 60rem) 20rem, 50vw"
 			class="tile__image"
 		/>

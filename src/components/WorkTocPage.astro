@@ -17,7 +17,7 @@ interface Props {
 		synopsis: string;
 		tags: string[];
 		completed: boolean;
-		episodes: { id: string; number: number; part?: number; title: string; publishedAt: Date }[];
+		episodes: { id: string; number: number; title: string; publishedAt: Date }[];
 	};
 	basePath: '/novels' | '/manga';
 	historyKey: string;
@@ -29,13 +29,11 @@ interface Props {
 const { work, basePath, historyKey, backHref, backLabel, cover } = Astro.props;
 const { slug, episodes } = work;
 const tagLists = await tagListPaths(work.tags, basePath === '/novels' ? 'novels' : 'manga');
-// A novel continued in later parts lists its episodes under a heading per part, once a second part has episodes out.
-const parts = [...Map.groupBy(episodes, (episode) => episode.part ?? 1)];
 ---
 
 <Layout title={work.title} description={work.synopsis || undefined} image={cover} back={{ href: backHref, label: backLabel, toList: true, tagLists }}>
 	<header class:list={['work-header', { 'work-header--with-cover': cover }]}>
-		{cover && <Image src={cover} alt="" class="work-header__cover" widths={[240, 480]} sizes="240px" />}
+		{cover && <Image src={cover} alt="" class="work-header__cover" widths={[240, 480]} width={Math.min(480, cover.width)} sizes="240px" />}
 		<h1 class="work-header__title">{work.title}</h1>
 		{work.completed && (
 			<p class="work-header__status">
@@ -63,30 +61,25 @@ const parts = [...Map.groupBy(episodes, (episode) => episode.part ?? 1)];
 	</div>
 
 	<h2 class="toc-heading">{t.toc}</h2>
-	{parts.map(([part, partEpisodes]) => (
-		<>
-			{parts.length > 1 && <h3 class="part-heading">{t.partHeading(part)}</h3>}
-			<ol class="episode-list">
-				{partEpisodes.map((episode) => (
-					<li>
-						<a
-							class="episode-list__row"
-							href={`${basePath}/${episode.id}`}
-							data-work-slug={historyKey}
-							data-toc-episode={episode.number}
-						>
-							<span class="episode-list__label">
-								{t.episodeNumber(episode.number)}{episode.title && <span class="episode-list__title">{episode.title}</span>}
-							</span>
-							{/* Shown by public/history.js on episodes added since the reader last read this work. */}
-							<span class="episode-list__new" data-new-mark hidden>{t.newEpisode}</span>
-							<span class="episode-list__date">{formatDate(episode.publishedAt)}</span>
-						</a>
-					</li>
-				))}
-			</ol>
-		</>
-	))}
+	<ol class="episode-list">
+		{episodes.map((episode) => (
+			<li>
+				<a
+					class="episode-list__row"
+					href={`${basePath}/${episode.id}`}
+					data-work-slug={historyKey}
+					data-toc-episode={episode.number}
+				>
+					<span class="episode-list__label">
+						{t.episodeNumber(episode.number)}{episode.title && <span class="episode-list__title">{episode.title}</span>}
+					</span>
+					{/* Shown by public/history.js on episodes added since the reader last read this work. */}
+					<span class="episode-list__new" data-new-mark hidden>{t.newEpisode}</span>
+					<span class="episode-list__date">{formatDate(episode.publishedAt)}</span>
+				</a>
+			</li>
+		))}
+	</ol>
 
 	{siteConfig.ads?.workToc && (
 		<div class="toc-ad">
@@ -161,16 +154,6 @@ const parts = [...Map.groupBy(episodes, (episode) => episode.part ?? 1)];
 		font-size: 1.05rem;
 		border-top: 1px solid var(--border);
 		padding-top: 1.5rem;
-	}
-
-	.part-heading {
-		margin: 1.75rem 0 0.6rem;
-		font-size: 0.95rem;
-		color: var(--text-muted);
-	}
-
-	.toc-heading + .part-heading {
-		margin-top: 0;
 	}
 
 	.episode-list {

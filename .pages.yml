@@ -70,7 +70,7 @@ content:
             type: string
           - name: publishedAt
             label: 公開日時
-            description: 未来の日時にすると、その時刻に自動で公開されます（1時間ほど遅れることがあります）。
+            description: 公開日時になると自動で公開されます（反映まで10分ほどかかります）。先にCloudflareで予約投稿の設定が必要です（手順書「0_サイトの立ち上げ」の「予約投稿を使う」）。
             type: date
             options:
               time: true
@@ -159,6 +159,75 @@ content:
             - { value: 28, label: 第28部 }
             - { value: 29, label: 第29部 }
             - { value: 30, label: 第30部 }
+            - { value: 31, label: 第31部 }
+            - { value: 32, label: 第32部 }
+            - { value: 33, label: 第33部 }
+            - { value: 34, label: 第34部 }
+            - { value: 35, label: 第35部 }
+            - { value: 36, label: 第36部 }
+            - { value: 37, label: 第37部 }
+            - { value: 38, label: 第38部 }
+            - { value: 39, label: 第39部 }
+            - { value: 40, label: 第40部 }
+            - { value: 41, label: 第41部 }
+            - { value: 42, label: 第42部 }
+            - { value: 43, label: 第43部 }
+            - { value: 44, label: 第44部 }
+            - { value: 45, label: 第45部 }
+            - { value: 46, label: 第46部 }
+            - { value: 47, label: 第47部 }
+            - { value: 48, label: 第48部 }
+            - { value: 49, label: 第49部 }
+            - { value: 50, label: 第50部 }
+            - { value: 51, label: 第51部 }
+            - { value: 52, label: 第52部 }
+            - { value: 53, label: 第53部 }
+            - { value: 54, label: 第54部 }
+            - { value: 55, label: 第55部 }
+            - { value: 56, label: 第56部 }
+            - { value: 57, label: 第57部 }
+            - { value: 58, label: 第58部 }
+            - { value: 59, label: 第59部 }
+            - { value: 60, label: 第60部 }
+            - { value: 61, label: 第61部 }
+            - { value: 62, label: 第62部 }
+            - { value: 63, label: 第63部 }
+            - { value: 64, label: 第64部 }
+            - { value: 65, label: 第65部 }
+            - { value: 66, label: 第66部 }
+            - { value: 67, label: 第67部 }
+            - { value: 68, label: 第68部 }
+            - { value: 69, label: 第69部 }
+            - { value: 70, label: 第70部 }
+            - { value: 71, label: 第71部 }
+            - { value: 72, label: 第72部 }
+            - { value: 73, label: 第73部 }
+            - { value: 74, label: 第74部 }
+            - { value: 75, label: 第75部 }
+            - { value: 76, label: 第76部 }
+            - { value: 77, label: 第77部 }
+            - { value: 78, label: 第78部 }
+            - { value: 79, label: 第79部 }
+            - { value: 80, label: 第80部 }
+            - { value: 81, label: 第81部 }
+            - { value: 82, label: 第82部 }
+            - { value: 83, label: 第83部 }
+            - { value: 84, label: 第84部 }
+            - { value: 85, label: 第85部 }
+            - { value: 86, label: 第86部 }
+            - { value: 87, label: 第87部 }
+            - { value: 88, label: 第88部 }
+            - { value: 89, label: 第89部 }
+            - { value: 90, label: 第90部 }
+            - { value: 91, label: 第91部 }
+            - { value: 92, label: 第92部 }
+            - { value: 93, label: 第93部 }
+            - { value: 94, label: 第94部 }
+            - { value: 95, label: 第95部 }
+            - { value: 96, label: 第96部 }
+            - { value: 97, label: 第97部 }
+            - { value: 98, label: 第98部 }
+            - { value: 99, label: 第99部 }
         required: true
       - name: title
         label: 名前
@@ -178,7 +247,7 @@ content:
             type: string
           - name: publishedAt
             label: 公開日時
-            description: 未来の日時にすると、その時刻に自動で公開されます（1時間ほど遅れることがあります）。
+            description: 公開日時になると自動で公開されます（反映まで10分ほどかかります）。先にCloudflareで予約投稿の設定が必要です（手順書「0_サイトの立ち上げ」の「予約投稿を使う」）。
             type: date
             options:
               time: true
@@ -244,7 +313,7 @@ content:
             type: string
           - name: publishedAt
             label: 公開日時
-            description: 未来の日時にすると、その時刻に自動で公開されます（1時間ほど遅れることがあります）。
+            description: 公開日時になると自動で公開されます（反映まで10分ほどかかります）。先にCloudflareで予約投稿の設定が必要です（手順書「0_サイトの立ち上げ」の「予約投稿を使う」）。
             type: date
             options:
               time: true
@@ -302,7 +371,7 @@ content:
         type: text
       - name: publishedAt
         label: 公開日時
-        description: 未来の日時にすると、その時刻に自動で公開されます（1時間ほど遅れることがあります）。
+        description: 公開日時になると自動で公開されます（反映まで10分ほどかかります）。先にCloudflareで予約投稿の設定が必要です（手順書「0_サイトの立ち上げ」の「予約投稿を使う」）。
         type: date
         options:
           time: true
@@ -330,14 +399,14 @@ content:
       - name: links
         label: 作者ページにリンクを追加
         type: object
-        list: true
+        list:
+          collapsible:
+            summary: "{fields.url}"
         fields:
-          - name: label
-            label: 表示名
+          - name: note
+            label: リンクの上に表示する文（任意）
+            description: 例：「〇〇の購入は下のサイトから」
             type: string
-            pattern:
-              regex: '\S'
-              message: 表示名を入力してください
           - name: url
             label: リンク先
             type: string
@@ -390,7 +459,6 @@ content:
         type: boolean
       - name: ads
         label: 広告
-        description: 広告サービスで発行されたコードを、表示したい場所の欄に貼ります。空欄の場所には広告は表示されません。
         type: object
         fields:
           - name: provider
@@ -398,32 +466,35 @@ content:
             description: プライバシーポリシーに表示されます。広告コードを貼るときは必ず入れてください。
             type: string
           - name: providerPrivacyUrl
-            label: プライバシーポリシーのURL
-            description: 広告サービスのプライバシーポリシーのアドレスです（分かれば）。
+            label: 広告サービスのプライバシーポリシーのURL（分かれば）
             type: string
             pattern:
               regex: ^(https://.*)?$
               message: https:// から始まるアドレスで書いてください
-          - name: afterEpisode
-            label: 各話の一番下（おすすめ）
-            type: code
-            options:
-              format: html
-          - name: sidebar
-            label: PCで見たときの本文の右側の余白
-            type: code
-            options:
-              format: html
-          - name: workToc
-            label: 作品の目次の下
-            type: code
-            options:
-              format: html
-          - name: listFeed
-            label: 作品一覧で、作品5つごとの間
-            type: code
-            options:
-              format: html
+          - name: placements
+            label: 広告の表示場所（コードを貼った欄に表示）
+            type: object
+            fields:
+              - name: afterEpisode
+                label: 各話の一番下（おすすめ）
+                type: code
+                options:
+                  format: html
+              - name: sidebar
+                label: PCで見たときの本文の右側の余白
+                type: code
+                options:
+                  format: html
+              - name: workToc
+                label: 作品の目次の下
+                type: code
+                options:
+                  format: html
+              - name: listFeed
+                label: 作品一覧で、作品5つごとの間
+                type: code
+                options:
+                  format: html
           - name: adsTxt
             label: ads.txt の内容
             description: 広告サービスから ads.txt の設置を求められた場合だけ、その内容を貼ります。

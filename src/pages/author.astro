@@ -3,9 +3,15 @@ import Layout from '../layouts/Layout.astro';
 import { siteConfig, t } from '../site-config.mjs';
 
 const links = [
-	...(siteConfig.xAccount ? [{ label: 'X', url: `https://x.com/${siteConfig.xAccount}` }] : []),
-	...siteConfig.links,
+	...(siteConfig.xAccount ? [{ note: '', label: 'X', url: `https://x.com/${siteConfig.xAccount}`, shown: `@${siteConfig.xAccount}` }] : []),
+	...siteConfig.links.map((link) => ({ ...link, shown: shownUrl(link.url) })),
 ];
+
+// The address without https://, www. and a trailing slash: the row's text, so readers see where it goes.
+function shownUrl(url: string) {
+	const { hostname, pathname, search } = new URL(url);
+	return `${hostname.replace(/^www\./, '')}${pathname === '/' ? '' : pathname.replace(/\/$/, '')}${search}`;
+}
 ---
 
 <Layout title={siteConfig.author} description={siteConfig.profile || siteConfig.description} back={{ href: '/', label: t.backToTop }}>
@@ -15,8 +21,10 @@ const links = [
 		<ul class="author-links">
 			{links.map((link) => (
 				<li>
-					<a href={link.url} target="_blank" rel="noopener noreferrer">
-						{link.label}
+					{link.note && <p class="author-links__note">{link.note}</p>}
+					<a href={link.url} target="_blank" rel="noopener noreferrer" class="author-links__row">
+						<span class="author-links__url">{link.shown}</span>
+						<span class="author-links__mark" aria-hidden="true">↗</span>
 					</a>
 				</li>
 			))}
@@ -43,22 +51,46 @@ const links = [
 		margin: 1.75rem 0 0;
 		padding: 0;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.6rem;
+		flex-direction: column;
+		gap: 0.9rem;
 	}
 
-	.author-links a {
-		display: inline-block;
+	.author-links__note {
+		margin: 0 0 0.4rem;
 		font-size: 0.9rem;
-		font-weight: 600;
-		color: var(--accent);
-		border: 1px solid var(--border);
-		border-radius: 999px;
-		padding: 0.5rem 1.2rem;
+		line-height: 1.7;
+		color: var(--text);
+		white-space: pre-line;
+		overflow-wrap: anywhere;
 	}
 
-	.author-links a:hover {
+	/* Same look as a table of contents row. */
+	.author-links__row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		border: 1px solid var(--border);
+		border-radius: 0.4rem;
+		padding: 0.6rem 0.9rem;
+		color: var(--accent);
+	}
+
+	.author-links__row:hover {
 		text-decoration: none;
 		border-color: var(--accent);
+	}
+
+	.author-links__url {
+		min-width: 0;
+		font-weight: 600;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.author-links__mark {
+		flex-shrink: 0;
+		color: var(--text-muted);
 	}
 </style>

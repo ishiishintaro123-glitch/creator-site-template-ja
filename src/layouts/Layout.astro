@@ -96,7 +96,7 @@ const currentPath = currentTab ?? (Astro.url.pathname.replace(/\/+$/, '') || '/'
 				)}
 				{showAuthorLink && (
 					<a href="/author" class="author-link">
-						{siteConfig.author}<span class="author-link__hint">{t.authorLinkHint}</span>
+						{siteConfig.author}
 					</a>
 				)}
 				{readingControls ? (
@@ -296,11 +296,6 @@ const currentPath = currentTab ?? (Astro.url.pathname.replace(/\/+$/, '') || '/'
 		overflow: hidden;
 	}
 
-	.author-link__hint {
-		font-size: 0.8rem;
-		font-weight: 600;
-	}
-
 	.settings {
 		position: relative;
 		font-size: 1rem;
@@ -372,6 +367,11 @@ const currentPath = currentTab ?? (Astro.url.pathname.replace(/\/+$/, '') || '/'
 		gap: 1.25rem;
 	}
 
+	/* The site's orange instead of the browser's default blue. */
+	.settings input[type='radio'] {
+		accent-color: var(--accent);
+	}
+
 	.settings label {
 		display: inline-flex;
 		align-items: center;
@@ -401,7 +401,8 @@ const currentPath = currentTab ?? (Astro.url.pathname.replace(/\/+$/, '') || '/'
 		cursor: pointer;
 	}
 
-	main {
+	/* main.wrap, not main: .wrap's padding shorthand would otherwise reset these. */
+	main.wrap {
 		min-height: 60vh;
 		padding-top: 1.5rem;
 		padding-bottom: 3rem;

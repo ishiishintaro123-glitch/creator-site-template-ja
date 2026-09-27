@@ -7,7 +7,7 @@ const optionalText = z.string().trim().nullish().transform((value) => value ?? '
 const tags = z.array(z.string()).nullish().transform((value) => value ?? []);
 const completed = z.boolean().nullish().transform((value) => value ?? false);
 // Publish date and time on the creator's clock (see src/lib/dates.mjs). A future one keeps the work or episode hidden
-// until then (scheduled publishing; .github/workflows/scheduled-publish.yml rebuilds the site when the time comes).
+// until then (scheduled publishing; worker/index.js rebuilds the site when the time comes).
 const dateOn = (message: string) =>
 	z.any().transform((value, context) => {
 		const date = parseSiteDate(value, siteConfig.timeZone);

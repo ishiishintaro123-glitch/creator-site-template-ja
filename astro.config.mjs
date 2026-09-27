@@ -5,11 +5,12 @@ import { satteri } from '@astrojs/markdown-satteri';
 import { lineBreaks } from './src/markdown/line-breaks.mjs';
 import { siteConfig } from './src/site-config.mjs';
 import siteFiles from './src/integrations/site-files.mjs';
+import pruneImages from './src/integrations/prune-images.mjs';
 
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.url,
-  integrations: [sitemap(), siteFiles()],
+  integrations: [sitemap(), siteFiles(), pruneImages()],
   markdown: {
     // 小説は1行ずつ改行して書くことが多いので、改行1回をそのまま改行として表示する（通常のMarkdownでは前の行とつながる）
     processor: satteri({ mdastPlugins: [lineBreaks] }),

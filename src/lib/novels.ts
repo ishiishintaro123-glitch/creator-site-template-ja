@@ -13,8 +13,6 @@ import { releasedEpisodes } from './dates.mjs';
 export interface Episode {
 	id: string;
 	number: number;
-	/** Which part of the work (1, 2, ...) the episode is in; see partsByWork below. */
-	part: number;
 	/** Optional episode subtitle; empty string when not set. */
 	title: string;
 	publishedAt: Date;
@@ -88,14 +86,13 @@ async function load(): Promise<Work[]> {
 			const file = `src/content/novels/${entry.id}.yaml`;
 			// Released episodes stop at the first scheduled one across all parts, so numbers never shift.
 			const all = [
-				...entry.data.episodes.map((episode) => ({ ...episode, part: 1 })),
-				...(laterParts.get(entry.id) ?? []).flatMap((part) => part.data.episodes.map((episode) => ({ ...episode, part: part.data.part }))),
+				...entry.data.episodes,
+				...(laterParts.get(entry.id) ?? []).flatMap((part) => part.data.episodes),
 			];
 			const episodes = await Promise.all(
 				releasedEpisodes(all).map(async (episode, index) => ({
 					id: `${entry.id}/${index + 1}`,
 					number: index + 1,
-					part: episode.part,
 					title: episode.title,
 					publishedAt: episode.publishedAt,
 					html: await renderEpisode(episode.body),

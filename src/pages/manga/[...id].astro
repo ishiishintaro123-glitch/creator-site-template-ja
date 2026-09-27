@@ -47,6 +47,7 @@ const { work, episode, prevEpisode, nextEpisode } = Astro.props as {
 				src={page}
 				alt={t.pageAlt(index + 1)}
 				widths={[480, 800, 1200]}
+				width={Math.min(1200, page.width)}
 				sizes="(min-width: 60rem) 60rem, 100vw"
 				loading={index < 2 ? 'eager' : 'lazy'}
 			/>

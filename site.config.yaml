@@ -30,11 +30,12 @@ xAccount: ""
 # 自己紹介。改行もそのまま表示されます。使わない場合は空欄のままにしてください
 profile: ""
 
-# 作者ページに載せるリンク（X・購入先など）。label が表示名、url がリンク先（https:// から始まるもの）です
+# 作者ページに載せるリンク（X・購入先など）。url がリンク先（https:// から始まるもの）で、アドレスがそのまま表示されます
+# note はリンクの上に表示する文です（なくても可）
 # xAccount を設定している場合、Xへのリンクは自動で先頭に追加されます
 # 書き方の例:
 # links:
-#   - label: BOOTHで購入
+#   - note: 本の購入は下のサイトから
 #     url: https://example.booth.pm
 links: []
 
@@ -52,27 +53,30 @@ blockAi: false
 #
 # provider: 広告サービス名（プライバシーポリシーに表示されます）
 # providerPrivacyUrl: 広告サービスのプライバシーポリシーのURL（分かれば。https:// から始まるもの）
-# afterEpisode: 各話の一番下（「次の話」とXでシェアするボタンの下。おすすめ）
-# sidebar: PCで見たときの本文の右側の余白（スクロールしても付いてきます。画面の狭いスマホでは表示されません）
-# workToc: 作品の目次の下
-# listFeed: 作品一覧で、作品5つごとの間
+# placements: 広告の表示場所。次の4つの欄にコードを貼ります
+#   afterEpisode: 各話の一番下（「次の話」とXでシェアするボタンの下。おすすめ）
+#   sidebar: PCで見たときの本文の右側の余白（スクロールしても付いてきます。画面の狭いスマホでは表示されません）
+#   workToc: 作品の目次の下
+#   listFeed: 作品一覧で、作品5つごとの間
 # adsTxt: 広告サービスから ads.txt の設置を求められた場合、その内容を貼ってください（不要なら空欄）
 #
-# コードは「|」の次の行から、行頭に4つ空白を入れてそのまま貼ってください。書き方の例:
+# コードは「|」の次の行から、行頭に6つ空白を入れてそのまま貼ってください。書き方の例:
 # ads:
 #   provider: Google AdSense
 #   providerPrivacyUrl: https://policies.google.com/technologies/ads
-#   afterEpisode: |
-#     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
-#     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-0000000000000000" data-ad-slot="0000000000"></ins>
-#     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+#   placements:
+#     afterEpisode: |
+#       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+#       <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-0000000000000000" data-ad-slot="0000000000"></ins>
+#       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 #   adsTxt: |
 #     google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
 ads:
   provider: ""
   providerPrivacyUrl: ""
-  afterEpisode: ""
-  sidebar: ""
-  workToc: ""
-  listFeed: ""
+  placements:
+    afterEpisode: ""
+    sidebar: ""
+    workToc: ""
+    listFeed: ""
   adsTxt: ""

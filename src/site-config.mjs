@@ -51,7 +51,10 @@ function buildSchema(t) {
 		links: z
 			.array(
 				z.object({
-					label: required(t.labelLinkLabel),
+					// Optional text shown above the link, e.g. where to buy a book.
+					note: z.string().trim().nullish().transform((value) => value ?? ''),
+					// No longer shown (the row shows the address); kept optional so older files still load.
+					label: z.string().trim().nullish().transform((value) => value ?? ''),
 					// https only: rejects javascript: and other schemes that could run code when clicked.
 					url: required(t.labelLinkUrl).pipe(z.url({ protocol: /^https$/, error: t.linkUrlMustBeHttps })),
 				}),
@@ -60,6 +63,13 @@ function buildSchema(t) {
 			.nullish()
 			.transform((value) => value ?? []),
 		ads: z
+			// The four ad codes sit in a group of their own (placements), shown as one heading in Pages CMS; files
+			// from before that have them directly under ads. Either way they come out flat, as siteConfig.ads.<slot>.
+			.preprocess((value) => {
+				if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
+				const { placements, ...rest } = value;
+				return placements && typeof placements === 'object' && !Array.isArray(placements) ? { ...rest, ...placements } : rest;
+			}, z
 			.object(
 				{
 					provider: z.string().trim().nullish().transform((value) => value ?? ''),
@@ -77,7 +87,7 @@ function buildSchema(t) {
 				},
 				{ error: t.adsInvalid },
 			)
-			.nullish()
+			.nullish())
 			.transform((value) => (value && AD_SLOTS.some((slot) => value[slot]) ? value : null))
 			.refine((value) => !value || value.provider !== '', { error: t.adsProviderRequired }),
 	});
