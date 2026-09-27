@@ -13,3 +13,5 @@
 ## 困ったときは
 
 不具合の報告は、このテンプレートの[Issues](https://github.com/ishiishintaro123-glitch/creator-site-template-ja/issues)で受け付けています（あなたのサイトのリポジトリのIssuesではありません）。個人で開発しているため、対応までお時間をいただくことや、対応できない場合があります。個別の使い方のご質問にはお答えできないため、この手順書をご覧ください。
+
+手順書の分かりにくい所や、書いてあるとおりに進まなかった所は、ぜひ[Issues](https://github.com/ishiishintaro123-glitch/creator-site-template-ja/issues)で教えてください。個別にお答えする代わりに、手順書を直して、次に読む人にも分かるようにします。どのページのどの部分か、書いてあると助かります。
