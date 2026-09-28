@@ -21,9 +21,9 @@ const hasContact = siteConfig.xAccount !== '' || siteConfig.links.length > 0;
 		<p>This site uses a third-party advertising service, "{ads.provider}".</p>
 		<p>Advertising providers may use cookies and similar technologies to collect information about your visits to this and other websites in order to show ads that match your interests. This does not include information that directly identifies you, such as your name, address, email address, or phone number.</p>
 		{ads.providerPrivacyUrl ? (
-			<p>For how this information is handled and how to disable cookies, see the <a href={ads.providerPrivacyUrl} target="_blank" rel="noopener noreferrer">{ads.provider} privacy policy</a>.</p>
+			<p>For how this information is handled, see the <a href={ads.providerPrivacyUrl} target="_blank" rel="noopener noreferrer">{ads.provider} privacy policy</a>.</p>
 		) : (
-			<p>For how this information is handled and how to disable cookies, see the {ads.provider} privacy policy.</p>
+			<p>For how this information is handled, see the {ads.provider} privacy policy.</p>
 		)}
 		<p>You can disable cookies in your browser settings. You can also opt out of third-party cookies used for personalized advertising at <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a> or, in the EU and UK, <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer">www.youronlinechoices.eu</a>.</p>
 	</>

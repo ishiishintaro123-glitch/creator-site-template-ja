@@ -21,9 +21,9 @@ const hasContact = siteConfig.xAccount !== '' || siteConfig.links.length > 0;
 		<p>当サイトは、第三者配信の広告サービス「{ads.provider}」を利用しています。</p>
 		<p>広告配信事業者は、閲覧者の興味に応じた広告を表示するために、Cookieなどを使用して、閲覧者が当サイトや他のウェブサイトにアクセスした際の情報を取得することがあります。これには氏名・住所・メールアドレス・電話番号など、個人を特定する情報は含まれません。</p>
 		{ads.providerPrivacyUrl ? (
-			<p>情報の取り扱いやCookieを無効にする方法については、<a href={ads.providerPrivacyUrl} target="_blank" rel="noopener noreferrer">{ads.provider}のプライバシーポリシー</a>をご確認ください。</p>
+			<p>情報の取り扱いについては、<a href={ads.providerPrivacyUrl} target="_blank" rel="noopener noreferrer">{ads.provider}のプライバシーポリシー</a>をご確認ください。</p>
 		) : (
-			<p>情報の取り扱いやCookieを無効にする方法については、{ads.provider}のプライバシーポリシーをご確認ください。</p>
+			<p>情報の取り扱いについては、{ads.provider}のプライバシーポリシーをご確認ください。</p>
 		)}
 		<p>Cookieはブラウザの設定から無効にできます。また、<a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a>では、パーソナライズ広告に使われる第三者配信事業者のCookieを無効にできます。</p>
 	</>
