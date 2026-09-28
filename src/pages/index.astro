@@ -4,17 +4,39 @@ import MixedWorkList from '../components/MixedWorkList.astro';
 import { siteConfig, t } from '../site-config.mjs';
 import { getAllItems, getGenres } from '../lib/catalog';
 import { redirectTo } from '../lib/redirect';
+import { getShareImageUrl, getSiteShareImage } from '../lib/share-card';
 
 // With works in only one genre, that genre's list is the top page (no tabs, as before the other genres existed).
+// The redirect page carries the site's share card, so a link to the top page posted on X still shows one.
 const genres = await getGenres();
 if (genres.length < 2) {
-	return redirectTo(`/${genres[0] ?? 'novels'}`);
+	const path = `/${genres[0] ?? 'novels'}`;
+	const escape = (text: string) =>
+		text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	const siteImage = getSiteShareImage();
+	const imageUrl = siteImage ? await getShareImageUrl(siteImage) : null;
+	const meta = (attr: 'property' | 'name', key: string, value: string) =>
+		`<meta ${attr}="${key}" content="${escape(value)}">`;
+	const head = [
+		`<title>${escape(siteConfig.siteName)}</title>`,
+		meta('name', 'description', siteConfig.description),
+		meta('property', 'og:site_name', siteConfig.siteName),
+		meta('property', 'og:title', siteConfig.siteName),
+		meta('property', 'og:description', siteConfig.description),
+		meta('property', 'og:url', new URL(path, Astro.site).toString()),
+		meta('property', 'og:type', 'website'),
+		meta('property', 'og:locale', t.ogLocale),
+		...(imageUrl ? [meta('property', 'og:image', imageUrl)] : []),
+		meta('name', 'twitter:card', imageUrl ? 'summary_large_image' : 'summary'),
+		...(siteConfig.xAccount ? [meta('name', 'twitter:site', `@${siteConfig.xAccount}`)] : []),
+	].join('');
+	return redirectTo(path, head);
 }
 
 const items = await getAllItems();
 ---
 
-<Layout title={t.allWorksTitle} description={siteConfig.description} showAuthorLink showGenreNav>
+<Layout title="" description={siteConfig.description} showAuthorLink showGenreNav>
 	<div hidden data-list-page="/"></div>
 	<h1 class="page-title">{t.navAll}</h1>
 	<MixedWorkList items={items} tagScope="all" />

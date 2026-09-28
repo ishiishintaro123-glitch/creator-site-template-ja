@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getGenres } from '../../lib/catalog';
 import AdSlot from '../../components/AdSlot.astro';
 import WorkCard from '../../components/WorkCard.astro';
 import { siteConfig, t } from '../../site-config.mjs';
@@ -10,11 +11,13 @@ import { redirectTo } from '../../lib/redirect';
 const works = await getManga();
 // No manga on this site: send visitors to the top page instead of an empty list.
 if (works.length === 0) return redirectTo('/');
+// The only genre's list is the top page: it goes by the site name alone, in the tab and on share cards.
+const genres = await getGenres();
 
 const LIST_FEED_INTERVAL = 5;
 ---
 
-<Layout title={t.mangaListTitle} description={siteConfig.description} showAuthorLink showGenreNav>
+<Layout title={genres.length < 2 ? '' : t.mangaListTitle} description={siteConfig.description} showAuthorLink showGenreNav>
 	<div hidden data-list-page="/manga"></div>
 	<h1 class="page-title">{t.navManga}</h1>
 	<ul class="work-list">

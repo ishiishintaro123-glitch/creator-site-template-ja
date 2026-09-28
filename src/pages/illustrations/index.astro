@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getGenres } from '../../lib/catalog';
 import IllustrationFeedItem from '../../components/IllustrationFeedItem.astro';
 import IllustrationTile from '../../components/IllustrationTile.astro';
 import { siteConfig, t } from '../../site-config.mjs';
@@ -9,9 +10,11 @@ import { redirectTo } from '../../lib/redirect';
 const illustrations = await getIllustrations();
 // No illustrations on this site: send visitors to the top page instead of an empty list.
 if (illustrations.length === 0) return redirectTo('/');
+// The only genre's list is the top page: it goes by the site name alone, in the tab and on share cards.
+const genres = await getGenres();
 ---
 
-<Layout title={t.illustrationListTitle} description={siteConfig.description} showAuthorLink showGenreNav wide>
+<Layout title={genres.length < 2 ? '' : t.illustrationListTitle} description={siteConfig.description} showAuthorLink showGenreNav wide>
 	<div hidden data-list-page="/illustrations"></div>
 	<div class="list-header">
 		<h1 class="page-title">{t.navIllustrations}</h1>
