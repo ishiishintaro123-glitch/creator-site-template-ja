@@ -399,7 +399,7 @@ content:
       - name: xNote
         label: Xのリンクの上に表示する文（任意）
         description: 例：「更新のお知らせはXで」
-        type: string
+        type: text
       - name: xAccount
         label: XのユーザーID（@なし）
         description: 入れると、読者が作品をXでシェアしたときにあなたに通知が届きます。作者ページにもXへのリンクが付きます。使わなければ空欄のままで大丈夫です。
@@ -417,7 +417,7 @@ content:
           - name: note
             label: リンクの上に表示する文（任意）
             description: 例：「〇〇の購入は下のリンクから」
-            type: string
+            type: text
           - name: url
             label: リンク先
             type: string
@@ -479,8 +479,18 @@ content:
             label: 広告の表示場所（コードを貼った欄に表示）
             type: object
             fields:
+              - name: listFeed
+                label: 作品一覧で、作品5つごとの間
+                type: code
+                options:
+                  format: html
+              - name: workToc
+                label: 作品の目次の下
+                type: code
+                options:
+                  format: html
               - name: afterEpisode
-                label: 各話の一番下（おすすめ）
+                label: 各話の一番下
                 type: code
                 options:
                   format: html
@@ -491,16 +501,6 @@ content:
                   format: html
               - name: sidebarLeft
                 label: PCで見たときの本文の左側の余白
-                type: code
-                options:
-                  format: html
-              - name: workToc
-                label: 作品の目次の下
-                type: code
-                options:
-                  format: html
-              - name: listFeed
-                label: 作品一覧で、作品5つごとの間
                 type: code
                 options:
                   format: html
