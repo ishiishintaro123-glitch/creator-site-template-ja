@@ -396,6 +396,17 @@ content:
       - name: profile
         label: 自己紹介（作者ページに表示）
         type: text
+      - name: xNote
+        label: Xのリンクの上に表示する文（任意）
+        description: 例：「更新のお知らせはXで」
+        type: string
+      - name: xAccount
+        label: XのユーザーID（@なし）
+        description: 入れると、読者が作品をXでシェアしたときにあなたに通知が届きます。作者ページにもXへのリンクが付きます。使わなければ空欄のままで大丈夫です。
+        type: string
+        pattern:
+          regex: ^@?[A-Za-z0-9_]{0,15}$
+          message: 半角英数字とアンダースコア15文字以内で書いてください
       - name: links
         label: 作者ページにリンクを追加
         type: object
@@ -413,13 +424,6 @@ content:
             pattern:
               regex: ^https://
               message: https:// から始まるアドレスで書いてください
-      - name: xAccount
-        label: XのユーザーID（@なし）
-        description: 入れると、読者が作品をXでシェアしたときにあなたに通知が届きます。作者ページにもXへのリンクが付きます。使わなければ空欄のままで大丈夫です。
-        type: string
-        pattern:
-          regex: ^@?[A-Za-z0-9_]{0,15}$
-          message: 半角英数字とアンダースコア15文字以内で書いてください
       - name: siteName
         label: サイト名
         description: ブラウザのタブや検索結果、リンクがXやLINEなどに貼られたときに表示されます。

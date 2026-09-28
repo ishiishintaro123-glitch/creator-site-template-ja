@@ -34,6 +34,8 @@ function buildSchema(t) {
 			.refine((value) => value === '' || /^[A-Za-z0-9_]{1,15}$/.test(value), { error: t.xAccountInvalid })
 			.nullish()
 			.transform((value) => value ?? ''),
+		// Optional text above the X link on the author page, like note on the other links.
+		xNote: z.string().trim().nullish().transform((value) => value ?? ''),
 		// The creator's clock, for publish dates and times (scheduled episodes). Defaults to the language's usual zone.
 		timeZone: z
 			.string()

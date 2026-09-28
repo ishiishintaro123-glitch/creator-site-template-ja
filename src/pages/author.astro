@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { siteConfig, t } from '../site-config.mjs';
 
 const links = [
-	...(siteConfig.xAccount ? [{ note: '', label: 'X', url: `https://x.com/${siteConfig.xAccount}`, shown: `@${siteConfig.xAccount}` }] : []),
+	...(siteConfig.xAccount ? [{ note: siteConfig.xNote, label: 'X', url: `https://x.com/${siteConfig.xAccount}`, shown: `@${siteConfig.xAccount}` }] : []),
 	...siteConfig.links.map((link) => ({ ...link, shown: shownUrl(link.url) })),
 ];
 
