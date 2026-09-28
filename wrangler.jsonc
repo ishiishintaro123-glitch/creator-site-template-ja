@@ -3,6 +3,9 @@
 {
   "name": "creator-site",
   "compatibility_date": "2026-09-01",
+  // The site lives at <name>.<subdomain>.workers.dev (or a custom domain). Per-version preview URLs are off,
+  // so builds of other branches never get a public address of their own.
+  "preview_urls": false,
   // Scheduled publishing only (worker/index.js); everything else is served straight from dist/.
   "main": "worker/index.js",
   "triggers": { "crons": ["*/5 * * * *"] },
