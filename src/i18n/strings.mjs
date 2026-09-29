@@ -88,7 +88,7 @@ const ja = {
 	notFoundText: 'アドレスが間違っているか、ページが移動・削除された可能性があります。',
 
 	// llms.txt
-	llmsAuthorLine: (author) => `作者: ${author}。全データは静的Markdownで構成されています。`,
+	llmsAuthorLine: (author) => `作者: ${author}`,
 	llmsNovelsHeading: '小説作品 (Novels)',
 	llmsMangaHeading: '漫画作品 (Manga)',
 	llmsIllustrationsHeading: 'イラスト (Illustrations)',
@@ -221,7 +221,7 @@ const en = {
 	notFoundTitle: 'Page not found',
 	notFoundText: 'The address may be wrong, or the page may have been moved or deleted.',
 
-	llmsAuthorLine: (author) => `Author: ${author}. All content is built from static Markdown.`,
+	llmsAuthorLine: (author) => `Author: ${author}`,
 	llmsNovelsHeading: 'Novels',
 	llmsMangaHeading: 'Manga',
 	llmsIllustrationsHeading: 'Illustrations',
