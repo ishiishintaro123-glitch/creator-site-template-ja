@@ -38,22 +38,22 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 	data-episode-count={work.episodes.length}
 	data-base-href={`${basePath}/${work.slug}`}
 >
+	{genreLabel && <p class="novel-card__genre">{genreLabel}</p>}
+	<a href={titleHref} class="novel-card__title">
+		<span class="novel-card__title-text">{work.title}</span>
+		<span class="novel-card__episode">
+			{t.totalEpisodes(work.episodes.length)}
+		</span>
+		{work.completed && <CompletedBadge />}
+		{/* Filled in by public/history.js: episodes added since the reader last read this work. */}
+		<span class="novel-card__new" data-new-badge data-label={t.newEpisodesTemplate} hidden></span>
+	</a>
 	{cover && (
 		<a href={titleHref} class="novel-card__cover" tabindex="-1" aria-hidden="true">
 			<Image src={cover} alt="" widths={[160, 320]} width={Math.min(320, cover.width)} sizes="160px" />
 		</a>
 	)}
 	<div class="novel-card__body">
-		{genreLabel && <p class="novel-card__genre">{genreLabel}</p>}
-		<a href={titleHref} class="novel-card__title">
-			<span class="novel-card__title-text">{work.title}</span>
-			<span class="novel-card__episode">
-				{t.totalEpisodes(work.episodes.length)}
-			</span>
-			{work.completed && <CompletedBadge />}
-			{/* Filled in by public/history.js: episodes added since the reader last read this work. */}
-			<span class="novel-card__new" data-new-badge data-label={t.newEpisodesTemplate} hidden></span>
-		</a>
 		{work.synopsis && <p class="novel-card__synopsis" data-synopsis>{work.synopsis}</p>}
 		<button
 			type="button"
@@ -83,35 +83,25 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 </li>
 
 <style>
+	/* The title runs across the full width, so a long one isn't squeezed beside the cover. Below it, the cover floats
+	   on the left and the synopsis runs beside it (a line-clamp box doesn't wrap under a float). The tags always go
+	   below the cover, starting at the card's left edge. */
 	.novel-card {
 		border: 1px solid var(--border);
 		border-radius: 0.5rem;
 		background: var(--bg-elevated);
 		padding: 1rem 1.1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
+		display: flow-root;
 	}
 
-	/* With a cover: the cover floats on the left and the text runs beside it. The title and synopsis keep to their
-	   column (flex and line-clamp boxes don't wrap under a float), while tags that start below the cover use the
-	   full width instead of leaving a gap under it. */
-	.novel-card--with-cover {
-		display: flow-root;
+	.novel-card--with-cover .novel-card__tags {
+		clear: both;
 	}
 
 	.novel-card__cover {
 		float: left;
 		width: 6.5rem;
-		margin: 0 1rem 0.5rem 0;
-	}
-
-	.novel-card--with-cover .novel-card__link {
-		clear: both;
-		display: block;
-		width: fit-content;
-		margin: 0.75rem 0 0 auto;
-		white-space: nowrap;
+		margin: 0.6rem 1rem 0.5rem 0;
 	}
 
 	.novel-card__cover img {
@@ -121,13 +111,6 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 		aspect-ratio: 3 / 4;
 		object-fit: cover;
 		border-radius: 0.3rem;
-	}
-
-	.novel-card__genre {
-		margin: 0 0 0.3rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: var(--text-muted);
 	}
 
 	.novel-card__title {
@@ -171,6 +154,13 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 
 	.novel-card__new[hidden] {
 		display: none;
+	}
+
+	.novel-card__genre {
+		margin: 0 0 0.3rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--text-muted);
 	}
 
 	.novel-card__synopsis {
@@ -220,7 +210,11 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 	}
 
 	.novel-card__link {
-		align-self: flex-end;
+		clear: both;
+		display: block;
+		width: fit-content;
+		margin: 0.75rem 0 0 auto;
+		white-space: nowrap;
 		font-size: 0.9rem;
 		font-weight: 600;
 		color: var(--accent);
