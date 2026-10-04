@@ -174,11 +174,16 @@ const titleHref = work.episodes.length > 1 ? `${basePath}/${work.slug}` : firstH
 		overflow: hidden;
 	}
 
+	/* Beside a cover, enough lines to fill its height. */
+	.novel-card--with-cover .novel-card__synopsis {
+		-webkit-line-clamp: 5;
+	}
+
 	.novel-card__synopsis[data-truncatable] {
 		cursor: pointer;
 	}
 
-	.novel-card__synopsis--expanded {
+	.novel-card__synopsis.novel-card__synopsis--expanded {
 		display: block;
 		-webkit-line-clamp: unset;
 		overflow: visible;

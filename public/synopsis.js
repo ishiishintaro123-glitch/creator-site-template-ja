@@ -22,9 +22,12 @@
 			var naturalHeight = clone.scrollHeight;
 			clone.remove();
 
-			var lineHeight = parseFloat(window.getComputedStyle(synopsis).lineHeight);
+			// The number of lines shown comes from the CSS (more beside a cover).
+			var style = window.getComputedStyle(synopsis);
+			var lineHeight = parseFloat(style.lineHeight);
+			var lines = parseInt(style.webkitLineClamp, 10) || 3;
 			if (isNaN(lineHeight)) return;
-			if (naturalHeight <= lineHeight * 3 + 1) return;
+			if (naturalHeight <= lineHeight * lines + 1) return;
 
 			toggle.hidden = false;
 			synopsis.setAttribute('data-truncatable', '');

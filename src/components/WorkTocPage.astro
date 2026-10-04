@@ -37,6 +37,12 @@ const fullCover = cover && (await getImage({ src: cover, widths: [480, 800, 1200
 
 <Layout title={work.title} description={work.synopsis || undefined} image={cover} back={{ href: backHref, label: backLabel, toList: true, tagLists }}>
 	<header class:list={['work-header', { 'work-header--with-cover': cover }]}>
+		<h1 class="work-header__title">{work.title}</h1>
+		{work.completed && (
+			<p class="work-header__status">
+				<CompletedBadge />
+			</p>
+		)}
 		{cover && fullCover && (
 			<button
 				type="button"
@@ -49,12 +55,6 @@ const fullCover = cover && (await getImage({ src: cover, widths: [480, 800, 1200
 			>
 				<Image src={cover} alt="" widths={[240, 480]} width={Math.min(480, cover.width)} sizes="240px" />
 			</button>
-		)}
-		<h1 class="work-header__title">{work.title}</h1>
-		{work.completed && (
-			<p class="work-header__status">
-				<CompletedBadge />
-			</p>
 		)}
 		{work.synopsis && <p class="work-header__synopsis">{work.synopsis}</p>}
 		{work.tags.length > 0 && (
@@ -107,19 +107,17 @@ const fullCover = cover && (await getImage({ src: cover, widths: [480, 800, 1200
 </Layout>
 
 <style>
+	/* The title runs across the full width above the cover, so a long one isn't squeezed beside it. Below, the cover
+	   floats on the left and the synopsis runs beside it and then on under it, using the full width instead of a
+	   narrow column with an empty space under the cover. */
 	.work-header--with-cover {
-		display: grid;
-		grid-template-columns: 8rem minmax(0, 1fr);
-		column-gap: 1.25rem;
-		align-items: start;
-	}
-
-	.work-header--with-cover > :not(.work-header__cover) {
-		grid-column: 2;
+		display: flow-root;
 	}
 
 	.work-header__cover {
-		grid-row: span 3;
+		float: left;
+		width: 8rem;
+		margin: 0 1.25rem 0.75rem 0;
 		display: block;
 		padding: 0;
 		border: 0;
