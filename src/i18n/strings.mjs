@@ -131,10 +131,10 @@ const ja = {
 	imageNotFound: (path, file) => `${file} の画像「${path}」が見つかりません。Pages CMSでアップロードし直すか、src/content/media/ にあるか確認してください`,
 	imageTypeNotSupported: (path, file) => `${file} の画像「${path}」は使えない形式です。PNG・JPEG・WebPのいずれかにしてください`,
 	workTooLarge: (title, file) =>
-		`「${title}」（${file}）が大きくなりすぎました（約30万字が上限）。これ以上増えるとPages CMSで開けなくなるため、続きは「小説（第2部以降）」で次の部として追加してください`,
+		`「${title}」（${file}）が大きくなりすぎました（約30万字が上限）。これ以上増えるとPages CMSで開けなくなるため、続きは「小説の続き」で次の部として追加してください`,
 	partTitle: (title, part, chapter) => `${title} 第${part}部${chapter ? ` ${chapter}` : ''}`,
 	partWorkNotSet: '「作品」（work）でどの作品の続きかを選んでください',
-	partWorkNotFound: (file) => `${file} の「作品」（work）に選ばれた作品が見つかりません。Pages CMSの「小説（第2部以降）」で選び直してください`,
+	partWorkNotFound: (file) => `${file} の「作品」（work）に選ばれた作品が見つかりません。Pages CMSの「小説の続き」で選び直してください`,
 	partNumberInvalid: '「第何部」（part）は2以上の数字で入れてください',
 	partNumberTaken: (title, part, first, second) =>
 		`「${title}」の第${part}部が2つあります（${first} と ${second}）。どちらかの「第何部」を直してください`,
@@ -263,10 +263,10 @@ const en = {
 	imageNotFound: (path, file) => `The image "${path}" in ${file} was not found. Upload it again in Pages CMS, or check that it is in src/content/media/`,
 	imageTypeNotSupported: (path, file) => `The image "${path}" in ${file} is not a supported format. Use PNG, JPEG or WebP`,
 	workTooLarge: (title, file) =>
-		`"${title}" (${file}) has grown too large (the limit is roughly 150,000 words). Pages CMS cannot open files beyond that, so please continue it as the next part in "Novels (Part 2 onward)"`,
+		`"${title}" (${file}) has grown too large (the limit is roughly 150,000 words). Pages CMS cannot open files beyond that, so please continue it as the next part in "Novel parts"`,
 	partTitle: (title, part, chapter) => `${title} Part ${part}${chapter ? `: ${chapter}` : ''}`,
 	partWorkNotSet: 'Choose which novel this part continues in work',
-	partWorkNotFound: (file) => `The novel chosen in work of ${file} was not found. Choose it again in "Novels (Part 2 onward)" in Pages CMS`,
+	partWorkNotFound: (file) => `The novel chosen in work of ${file} was not found. Choose it again in "Novel parts" in Pages CMS`,
 	partNumberInvalid: 'part must be a number of 2 or more',
 	partNumberTaken: (title, part, first, second) => `"${title}" has two Part ${part}s (${first} and ${second}). Change the part number of one of them`,
 };

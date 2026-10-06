@@ -37,7 +37,7 @@ content:
     fields:
       - name: title
         label: 作品名
-        description: 1作品は全話を合わせて約30万字までです。超えそうになったら「小説（第2部以降）」で第2部を作ってください。
+        description: 1作品は全話を合わせて約30万字までです。超えそうになったら「小説の続き」で第2部を作ってください。
         type: string
         pattern:
           regex: '\S'
@@ -59,7 +59,7 @@ content:
           path: novels
       - name: chapter
         label: 章の見出し（任意）
-        description: 目次の第1話の上に表示されます。次の章は「小説（第2部以降）」で新しい部を作り、そこの「章の見出し」に入れます。章に分けないなら空欄のままで大丈夫です。
+        description: 目次の第1話の上に表示されます。次の章は「小説の続き」で新しい部を作り、そこの「章の見出し」に入れます。章に分けないなら空欄のままで大丈夫です。
         type: string
       - name: episodes
         label: 目次
@@ -107,7 +107,7 @@ content:
         type: boolean
 
   - name: novel-parts
-    label: 小説（第2部以降）
+    label: 小説の続き
     type: collection
     path: src/content/novel-parts
     format: yaml
