@@ -45,6 +45,8 @@ const novels = defineCollection({
 		cover: imagePath.nullish(), // Optional; without one, share cards use the site-wide image
 		completed, // Ticked when the work is finished
 		tags,
+		// Optional heading over the first episode in the table of contents. Later parts can start new ones.
+		chapter: optionalText,
 		episodes: novelEpisodes,
 	}),
 });
@@ -57,6 +59,8 @@ const novelParts = defineCollection({
 		title: optionalText, // Only tells the parts apart in Pages CMS; filled in by scripts/name-novel-parts.mjs
 		work: z.string({ error: t.partWorkNotSet }).trim().min(1, t.partWorkNotSet), // As Pages CMS saves it: src/content/novels/<作品ID>.yaml
 		part: z.coerce.number({ error: t.partNumberInvalid }).int(t.partNumberInvalid).min(2, t.partNumberInvalid),
+		// Starts a new chapter at this part's first episode; empty carries on the previous chapter.
+		chapter: optionalText,
 		episodes: novelEpisodes,
 	}),
 });

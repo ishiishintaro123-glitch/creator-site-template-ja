@@ -71,6 +71,24 @@
 		});
 	}
 
+	// A table of contents split into sections starts with them closed (WorkTocPage.astro). For a reader who has
+	// started the work, open the section with the episode they'd read next.
+	function openCurrentSection() {
+		var toc = document.querySelector('[data-toc-work]');
+		if (!toc) return;
+		var entry = loadHistory()[toc.getAttribute('data-toc-work')];
+		if (!entry) return;
+		var sections = toc.querySelectorAll('details[data-toc-section-first]');
+		if (!sections.length) return;
+		var episodeCount = parseInt(sections[sections.length - 1].getAttribute('data-toc-section-last'), 10);
+		var target = Math.min(entry.lastEpisode + 1, episodeCount);
+		sections.forEach(function (section) {
+			var first = parseInt(section.getAttribute('data-toc-section-first'), 10);
+			var last = parseInt(section.getAttribute('data-toc-section-last'), 10);
+			if (target >= first && target <= last) section.open = true;
+		});
+	}
+
 	function applyToListing() {
 		var cards = document.querySelectorAll('[data-work-slug]');
 		if (!cards.length) return;
@@ -109,5 +127,6 @@
 		recordVisit();
 		applyToListing();
 		markReadEpisodes();
+		openCurrentSection();
 	});
 })();

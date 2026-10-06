@@ -19,6 +19,7 @@ interface Props {
 		tags: string[];
 		completed: boolean;
 		episodes: { id: string; number: number; title: string; publishedAt: Date }[];
+		chapters?: { title: string; start: number }[];
 	};
 	basePath: '/novels' | '/manga';
 	historyKey: string;
@@ -33,6 +34,22 @@ const tagLists = await tagListPaths(work.tags, basePath === '/novels' ? 'novels'
 // The cover shown whole and large when tapped (ImageViewer). Same widths as a manga page, so a manga whose
 // cover is its first page reuses those files.
 const fullCover = cover && (await getImage({ src: cover, widths: [480, 800, 1200], width: Math.min(1200, cover.width) }));
+
+// The contents are split at chapter headings (novels; see src/lib/novels.ts), or every 100 episodes when a long work
+// has none. The sections start closed so the headings give an overview (the buttons above start or continue reading);
+// public/history.js opens the one the reader is in. A lone section stays open.
+const SECTION_SIZE = 100;
+const chapters = work.chapters ?? [];
+const starts =
+	chapters.length > 0
+		? [...(chapters[0].start > 1 ? [{ title: '', start: 1 }] : []), ...chapters]
+		: Array.from({ length: Math.ceil(episodes.length / SECTION_SIZE) }, (_, i) => ({ title: '', start: i * SECTION_SIZE + 1 }));
+const sections = starts.map((section, i) => ({
+	title: section.title,
+	episodes: episodes.slice(section.start - 1, (starts[i + 1]?.start ?? episodes.length + 1) - 1),
+}));
+const plain = sections.length < 2 && !sections[0]?.title;
+const Section = plain ? 'div' : 'details';
 ---
 
 <Layout title={work.title} description={work.synopsis || undefined} image={cover} back={{ href: backHref, label: backLabel, toList: true, tagLists }}>
@@ -77,25 +94,46 @@ const fullCover = cover && (await getImage({ src: cover, widths: [480, 800, 1200
 	</div>
 
 	<h2 class="toc-heading">{t.toc}</h2>
-	<ol class="episode-list">
-		{episodes.map((episode) => (
-			<li>
-				<a
-					class="episode-list__row"
-					href={`${basePath}/${episode.id}`}
-					data-work-slug={historyKey}
-					data-toc-episode={episode.number}
+	<div class="toc-sections" data-toc-work={plain ? undefined : historyKey}>
+		{sections.map((section, i) => {
+			const first = section.episodes[0].number;
+			const last = section.episodes[section.episodes.length - 1].number;
+			return (
+				<Section
+					class="toc-section"
+					open={plain ? undefined : sections.length === 1}
+					data-toc-section-first={first}
+					data-toc-section-last={last}
 				>
-					<span class="episode-list__label">
-						{t.episodeNumber(episode.number)}{episode.title && <span class="episode-list__title">{episode.title}</span>}
-					</span>
-					{/* Shown by public/history.js on episodes added since the reader last read this work. */}
-					<span class="episode-list__new" data-new-mark hidden>{t.newEpisode}</span>
-					<span class="episode-list__date">{formatDate(episode.publishedAt)}</span>
-				</a>
-			</li>
-		))}
-	</ol>
+					{!plain && (
+						<summary class="toc-section__summary">
+							{section.title && <span class="toc-section__title">{section.title}</span>}
+							<span class={section.title ? 'toc-section__range' : 'toc-section__title'}>{t.tocRange(first, last)}</span>
+						</summary>
+					)}
+					<ol class="episode-list">
+						{section.episodes.map((episode) => (
+							<li>
+								<a
+									class="episode-list__row"
+									href={`${basePath}/${episode.id}`}
+									data-work-slug={historyKey}
+									data-toc-episode={episode.number}
+								>
+									<span class="episode-list__label">
+										{t.episodeNumber(episode.number)}{episode.title && <span class="episode-list__title">{episode.title}</span>}
+									</span>
+									{/* Shown by public/history.js on episodes added since the reader last read this work. */}
+									<span class="episode-list__new" data-new-mark hidden>{t.newEpisode}</span>
+									<span class="episode-list__date">{formatDate(episode.publishedAt)}</span>
+								</a>
+							</li>
+						))}
+					</ol>
+				</Section>
+			);
+		})}
+	</div>
 
 	{cover && <ImageViewer />}
 
@@ -173,6 +211,63 @@ const fullCover = cover && (await getImage({ src: cover, widths: [480, 800, 1200
 		font-size: 1.05rem;
 		border-top: 1px solid var(--border);
 		padding-top: 1.5rem;
+	}
+
+	.toc-sections {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.toc-section__summary {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 0 0.75rem;
+		padding: 0.6rem 0.9rem;
+		border: 1px solid var(--border);
+		border-radius: 0.4rem;
+		background: var(--bg-elevated);
+		cursor: pointer;
+		font-weight: 600;
+		list-style: none;
+	}
+
+	.toc-section__summary:hover {
+		border-color: var(--accent);
+	}
+
+	/* Our own marker, so it reads as something to tap in every browser. */
+	.toc-section__summary::before {
+		content: '＋';
+		color: var(--accent);
+	}
+
+	details[open] > .toc-section__summary {
+		margin-bottom: 0.4rem;
+	}
+
+	details[open] > .toc-section__summary::before {
+		content: '－';
+	}
+
+	.toc-section__summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.toc-section__title {
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+
+	.toc-section__range {
+		font-size: 0.8rem;
+		font-weight: normal;
+		color: var(--text-muted);
+	}
+
+	details.toc-section > .episode-list {
+		margin-bottom: 0.5rem;
 	}
 
 	.episode-list {

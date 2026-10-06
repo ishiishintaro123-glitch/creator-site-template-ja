@@ -28,7 +28,15 @@ export interface Work {
 	completed: boolean;
 	cover?: ImageMetadata;
 	episodes: Episode[];
+	/** Chapter headings in the table of contents, each from its first episode on; empty when the work has none. */
+	chapters: Chapter[];
 	latestPublishedAt: Date;
+}
+
+export interface Chapter {
+	title: string;
+	/** Number of the chapter's first episode. */
+	start: number;
 }
 
 // Pages CMS reads files through GitHub's contents API, which only returns files up to 1 MB.
@@ -74,6 +82,18 @@ async function partsByWork(works: CollectionEntry<'novels'>[]) {
 	return byWork;
 }
 
+// A part with a chapter heading starts a chapter at its first episode; one without carries on the previous chapter,
+// so a part made only because the file grew too large changes nothing. Chapters with no released episode yet are left out.
+function chaptersOf(parts: CollectionEntry<'novels' | 'novelParts'>[], released: number): Chapter[] {
+	const chapters: Chapter[] = [];
+	let start = 1;
+	for (const part of parts) {
+		if (part.data.chapter && part.data.episodes.length > 0 && start <= released) chapters.push({ title: part.data.chapter, start });
+		start += part.data.episodes.length;
+	}
+	return chapters;
+}
+
 // Works (src/content/novels/<slug>.yaml) with their episodes, newest-updated work first.
 // Mistakes a creator can make fail the build with a message saying what to fix.
 async function load(): Promise<Work[]> {
@@ -85,10 +105,8 @@ async function load(): Promise<Work[]> {
 		entries.map(async (entry) => {
 			const file = `src/content/novels/${entry.id}.yaml`;
 			// Released episodes stop at the first scheduled one across all parts, so numbers never shift.
-			const all = [
-				...entry.data.episodes,
-				...(laterParts.get(entry.id) ?? []).flatMap((part) => part.data.episodes),
-			];
+			const parts = [entry, ...(laterParts.get(entry.id) ?? [])];
+			const all = parts.flatMap((part) => part.data.episodes);
 			const episodes = await Promise.all(
 				releasedEpisodes(all).map(async (episode, index) => ({
 					id: `${entry.id}/${index + 1}`,
@@ -106,6 +124,7 @@ async function load(): Promise<Work[]> {
 				completed: entry.data.completed && episodes.length === all.length,
 				cover: entry.data.cover ? resolveImage(entry.data.cover, file) : undefined,
 				episodes,
+				chapters: chaptersOf(parts, episodes.length),
 				latestPublishedAt: new Date(Math.max(0, ...episodes.map((episode) => episode.publishedAt.valueOf()))),
 			};
 		}),

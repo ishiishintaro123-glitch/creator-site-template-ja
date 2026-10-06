@@ -73,6 +73,7 @@ const ja = {
 	backToNovelList: '← 小説一覧に戻る',
 	backToToc: '← 目次に戻る',
 	toc: '目次',
+	tocRange: (from, to) => (from === to ? `第${from}話` : `第${from}〜${to}話`),
 	novelList: '小説一覧',
 	episodeNumber: (n) => `第${n}話`,
 	episodeLabel: (n, title) => (title ? `第${n}話 ${title}` : `第${n}話`),
@@ -131,7 +132,7 @@ const ja = {
 	imageTypeNotSupported: (path, file) => `${file} の画像「${path}」は使えない形式です。PNG・JPEG・WebPのいずれかにしてください`,
 	workTooLarge: (title, file) =>
 		`「${title}」（${file}）が大きくなりすぎました（約30万字が上限）。これ以上増えるとPages CMSで開けなくなるため、続きは「小説（第2部以降）」で次の部として追加してください`,
-	partTitle: (title, part) => `${title} 第${part}部`,
+	partTitle: (title, part, chapter) => `${title} 第${part}部${chapter ? ` ${chapter}` : ''}`,
 	partWorkNotSet: '「作品」（work）でどの作品の続きかを選んでください',
 	partWorkNotFound: (file) => `${file} の「作品」（work）に選ばれた作品が見つかりません。Pages CMSの「小説（第2部以降）」で選び直してください`,
 	partNumberInvalid: '「第何部」（part）は2以上の数字で入れてください',
@@ -207,6 +208,7 @@ const en = {
 	backToNovelList: '← All novels',
 	backToToc: '← Contents',
 	toc: 'Contents',
+	tocRange: (from, to) => (from === to ? `Chapter ${from}` : `Chapters ${from}–${to}`),
 	novelList: 'All novels',
 	episodeNumber: (n) => `Chapter ${n}`,
 	episodeLabel: (n, title) => (title ? `Chapter ${n}: ${title}` : `Chapter ${n}`),
@@ -262,7 +264,7 @@ const en = {
 	imageTypeNotSupported: (path, file) => `The image "${path}" in ${file} is not a supported format. Use PNG, JPEG or WebP`,
 	workTooLarge: (title, file) =>
 		`"${title}" (${file}) has grown too large (the limit is roughly 150,000 words). Pages CMS cannot open files beyond that, so please continue it as the next part in "Novels (Part 2 onward)"`,
-	partTitle: (title, part) => `${title} Part ${part}`,
+	partTitle: (title, part, chapter) => `${title} Part ${part}${chapter ? `: ${chapter}` : ''}`,
 	partWorkNotSet: 'Choose which novel this part continues in work',
 	partWorkNotFound: (file) => `The novel chosen in work of ${file} was not found. Choose it again in "Novels (Part 2 onward)" in Pages CMS`,
 	partNumberInvalid: 'part must be a number of 2 or more',

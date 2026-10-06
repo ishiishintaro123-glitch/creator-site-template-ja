@@ -1,4 +1,4 @@
-// Names each later part of a novel (src/content/novel-parts/) "<novel title> 第N部", so parts can be told apart in
+// Names each later part of a novel (src/content/novel-parts/) "<novel title> 第N部 <chapter heading>", so parts can be told apart in
 // Pages CMS without typing a name. Run by the content workflow after every save, like the manuscript import;
 // renaming a novel renames its parts too. Parts whose novel isn't found are left for the build to report.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -19,7 +19,7 @@ for (const fileName of existsSync(PARTS_DIR) ? readdirSync(PARTS_DIR).filter((na
 	const workId = String(part.work ?? '').replace(/^.*\//, '').replace(/\.yaml$/, '');
 	const workPath = join(WORKS_DIR, `${workId}.yaml`);
 	if (!workId || !existsSync(workPath) || !Number.isInteger(Number(part.part))) continue;
-	const title = t.partTitle(String(read(workPath).title ?? '').trim(), Number(part.part));
+	const title = t.partTitle(String(read(workPath).title ?? '').trim(), Number(part.part), String(part.chapter ?? '').trim());
 	// Pages CMS's select field only accepts the part number as text ("2"), so one typed as a number is rewritten.
 	if (part.title === title && typeof part.part === 'string') continue;
 	part.title = title;

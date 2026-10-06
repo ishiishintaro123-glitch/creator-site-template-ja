@@ -57,6 +57,10 @@ content:
         options:
           media: images
           path: novels
+      - name: chapter
+        label: 章の見出し（任意）
+        description: 目次の第1話の上に表示されます。次の章は「小説（第2部以降）」で新しい部を作り、そこの「章の見出し」に入れます。章に分けないなら空欄のままで大丈夫です。
+        type: string
       - name: episodes
         label: 目次
         type: object
@@ -229,9 +233,13 @@ content:
             - { value: 98, label: 第98部 }
             - { value: 99, label: 第99部 }
         required: true
+      - name: chapter
+        label: 章の見出し（任意）
+        description: 入れると、この部の最初の話から新しい章として目次に表示されます。空欄なら前の部の章の続きになります（長くなったので部を分けただけのとき）。
+        type: string
       - name: title
         label: 名前
-        description: 保存してから1〜2分で「作品名 第〇部」が自動で入ります（この一覧で見分けるための名前で、サイトには表示されません）。
+        description: 保存してから1〜2分で「作品名 第〇部 章の見出し」が自動で入ります（この一覧で見分けるための名前で、サイトには表示されません）。
         type: string
         readonly: true
       - name: episodes
