@@ -37,9 +37,10 @@ const genres = await getGenres();
 <style>
 	.list-header {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: 0.5rem 1rem;
 		margin-bottom: 1.25rem;
 	}
 
@@ -52,7 +53,8 @@ const genres = await getGenres();
 	   the other one is orange because it can be pressed. */
 	.view-switch {
 		display: flex;
-		gap: 1.25rem;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.25rem;
 	}
 
 	.view-switch button {
