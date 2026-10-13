@@ -51,19 +51,27 @@ jobs:
       - name: Name novel parts
         run: node scripts/name-novel-parts.mjs
 
-      # Push the imported episodes and part names back so Pages CMS shows them; the push makes Cloudflare build the
-      # site again with them. Pushes made with the workflow's token don't start another workflow run, so this
-      # doesn't loop.
-      - name: Save imported manuscripts and part names
+      # Tags chosen under "削除するタグ" in Pages CMS come off every work (scripts/delete-tags.mjs).
+      - name: Delete tags
+        run: node scripts/delete-tags.mjs
+
+      # Tags typed in as new ones become choices in Pages CMS for every work (scripts/update-tag-choices.mjs).
+      - name: Update tag choices
+        run: node scripts/update-tag-choices.mjs
+
+      # Push the imported episodes, part names and tag choices back so Pages CMS shows them; the push makes
+      # Cloudflare build the site again with them. Pushes made with the workflow's token don't start another
+      # workflow run, so this doesn't loop.
+      - name: Save imported manuscripts, part names and tag choices
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          if [ -z "$(git status --porcelain src/content)" ]; then exit 0; fi
+          if [ -z "$(git status --porcelain src/content .pages*.yml)" ]; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/content
-          git commit -m "Import manuscripts and name novel parts saved in Pages CMS"
+          git add src/content .pages*.yml
+          git commit -m "Import manuscripts, name novel parts and update tags after Pages CMS saves"
           remote="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
           git pull --rebase "$remote" main
           git push "$remote" HEAD:main

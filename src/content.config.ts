@@ -5,6 +5,9 @@ import { parseSiteDate } from './lib/dates.mjs';
 
 const optionalText = z.string().trim().nullish().transform((value) => value ?? '');
 const tags = z.array(z.string()).nullish().transform((value) => value ?? []);
+// Pages CMS has two tag fields: tags picks from tags used before (the choices scripts/update-tag-choices.mjs writes
+// into .pages.yml), newTags is typed in. The site shows both as one list.
+const newTags = tags;
 const completed = z.boolean().nullish().transform((value) => value ?? false);
 // Publish date and time on the creator's clock (see src/lib/dates.mjs). A future one keeps the work or episode hidden
 // until then (scheduled publishing; worker/index.js rebuilds the site when the time comes).
@@ -45,6 +48,7 @@ const novels = defineCollection({
 		cover: imagePath.nullish(), // Optional; without one, share cards use the site-wide image
 		completed, // Ticked when the work is finished
 		tags,
+		newTags,
 		// Optional heading over the first episode in the table of contents. Later parts can start new ones.
 		chapter: optionalText,
 		episodes: novelEpisodes,
@@ -74,6 +78,7 @@ const manga = defineCollection({
 		cover: imagePath.nullish(), // Defaults to the first page of the first episode
 		completed,
 		tags,
+		newTags,
 		episodes: z
 			.array(
 				z.object({
@@ -95,6 +100,7 @@ const illustrations = defineCollection({
 		title: optionalText,
 		description: optionalText,
 		tags,
+		newTags,
 		publishedAt: date,
 	}),
 });

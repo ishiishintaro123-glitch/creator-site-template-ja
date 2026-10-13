@@ -98,7 +98,15 @@ content:
           multiple: true
           extensions: [md, txt]
       - name: tags
-        label: タグ
+        label: タグ（これまでのタグから選ぶ）
+        description: これまでにどこかの作品で使ったタグから選べます。ないタグは下の「新しいタグ」に書いてください。
+        type: select
+        options:
+          multiple: true
+          values: ["サンプル"] # auto: scripts/update-tag-choices.mjs
+      - name: newTags
+        label: 新しいタグ
+        description: 上の選択肢にないタグを書きます。保存して1〜2分たつと、次からはすべての作品で上の選択肢に出ます。
         type: string
         list: true
       - name: completed
@@ -337,7 +345,15 @@ content:
               path: manga
               multiple: true
       - name: tags
-        label: タグ
+        label: タグ（これまでのタグから選ぶ）
+        description: これまでにどこかの作品で使ったタグから選べます。ないタグは下の「新しいタグ」に書いてください。
+        type: select
+        options:
+          multiple: true
+          values: ["サンプル"] # auto: scripts/update-tag-choices.mjs
+      - name: newTags
+        label: 新しいタグ
+        description: 上の選択肢にないタグを書きます。保存して1〜2分たつと、次からはすべての作品で上の選択肢に出ます。
         type: string
         list: true
       - name: completed
@@ -384,9 +400,36 @@ content:
         options:
           time: true
       - name: tags
-        label: タグ
+        label: タグ（これまでのタグから選ぶ）
+        description: これまでにどこかの作品で使ったタグから選べます。ないタグは下の「新しいタグ」に書いてください。
+        type: select
+        options:
+          multiple: true
+          values: ["サンプル"] # auto: scripts/update-tag-choices.mjs
+      - name: newTags
+        label: 新しいタグ
+        description: 上の選択肢にないタグを書きます。保存して1〜2分たつと、次からはすべての作品で上の選択肢に出ます。
         type: string
         list: true
+
+  - name: tags
+    label: タグの追加・削除
+    type: file
+    path: src/content/tags.yaml
+    format: yaml
+    fields:
+      - name: tags
+        label: あらかじめ用意しておくタグ
+        description: まだどの作品にも付けていなくても、ここに書いたタグは作品のタグの選択肢に出ます（保存して1〜2分後）。
+        type: string
+        list: true
+      - name: deleteTags
+        label: 削除するタグ
+        description: 選んだタグは、すべての作品から削除されます（保存して1〜2分後）。
+        type: select
+        options:
+          multiple: true
+          values: ["サンプル"] # auto: scripts/update-tag-choices.mjs
 
   - name: site
     label: サイト設定

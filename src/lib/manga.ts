@@ -43,7 +43,7 @@ async function load(): Promise<Manga[]> {
 				slug: entry.id,
 				title: entry.data.title,
 				synopsis: entry.data.synopsis,
-				tags: entry.data.tags,
+				tags: [...entry.data.tags, ...entry.data.newTags], // Picked and typed-in tags (src/content.config.ts)
 				completed: entry.data.completed && episodes.length === entry.data.episodes.length,
 				cover: entry.data.cover ? resolveImage(entry.data.cover, file) : episodes[0].pages[0],
 				episodes,

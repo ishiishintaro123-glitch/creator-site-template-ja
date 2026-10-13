@@ -120,7 +120,7 @@ async function load(): Promise<Work[]> {
 				slug: entry.id,
 				title: entry.data.title,
 				synopsis: entry.data.synopsis,
-				tags: entry.data.tags,
+				tags: [...entry.data.tags, ...entry.data.newTags], // Picked and typed-in tags (src/content.config.ts)
 				completed: entry.data.completed && episodes.length === all.length,
 				cover: entry.data.cover ? resolveImage(entry.data.cover, file) : undefined,
 				episodes,

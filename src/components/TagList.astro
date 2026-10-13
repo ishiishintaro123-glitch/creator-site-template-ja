@@ -1,5 +1,5 @@
 ---
-import { cleanTags, tagHref, type TagScope } from '../lib/tags';
+import { sortTags, tagHref, type TagScope } from '../lib/tags';
 
 // A work's tags; each opens the list of works with that tag.
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { scope } = Astro.props;
-const tags = await Promise.all(cleanTags(Astro.props.tags).map(async (name) => ({ name, href: await tagHref(name, scope) })));
+const tags = await Promise.all((await sortTags(Astro.props.tags)).map(async (name) => ({ name, href: await tagHref(name, scope) })));
 ---
 
 {tags.length > 0 && (

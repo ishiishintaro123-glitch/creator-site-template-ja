@@ -30,7 +30,7 @@ async function load(): Promise<Illustration[]> {
 				title: entry.data.title,
 				label: entry.data.title || t.untitledIllustration(formatDate(entry.data.publishedAt)),
 				description: entry.data.description,
-				tags: entry.data.tags,
+				tags: [...entry.data.tags, ...entry.data.newTags], // Picked and typed-in tags (src/content.config.ts)
 				images: entry.data.images.map((image) => resolveImage(image, file)),
 				publishedAt: entry.data.publishedAt,
 			};

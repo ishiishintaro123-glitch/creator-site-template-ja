@@ -97,6 +97,16 @@ export async function tagHref(name: string, scope: TagScope): Promise<string | u
 	return tagPath(tag, scope);
 }
 
+/**
+ * A work's tags in one order for the whole site, so two works with the same tags show them alike whatever order they
+ * were picked in: most used first (as in the tag choices of Pages CMS), then by name.
+ */
+export async function sortTags(names: string[]): Promise<string[]> {
+	const map = await getTagMap();
+	const uses = (name: string) => map.get(tagKey(name))?.items.length ?? 0;
+	return cleanTags(names).sort((a, b) => uses(b) - uses(a) || a.localeCompare(b, 'ja'));
+}
+
 /** Every tag list a work of this genre appears in (for the back link; see public/back-links.js). */
 export async function tagListPaths(names: string[], genre: Genre): Promise<string[]> {
 	const hrefs = await Promise.all(cleanTags(names).flatMap((name) => [tagHref(name, 'all'), tagHref(name, genre)]));
