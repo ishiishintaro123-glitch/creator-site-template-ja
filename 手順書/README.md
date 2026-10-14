@@ -15,7 +15,7 @@
 手順書をAIに読み込ませると、自分の言葉で質問できます。Gemini Notebook（無料）なら、次のようにします。
 
 1. Gemini Notebookで新しいノートブックを作り、「ソースを追加」に次のURLを貼ります。手順書の全ページをまとめたものです。
-   `https://raw.githubusercontent.com/ishiishintaro123-glitch/creator-site-template-ja/main/guide-for-ai.txt`
+   `https://raw.githubusercontent.com/shintaronovel/creator-site-template-ja/main/guide-for-ai.txt`
 2. ノートブックの「カスタム指示」に次の文を入れます（任意）。答えが手順書に沿いやすくなり、どのページをもとにした答えかも書かれるので、手順書で確かめやすくなります。
 
    ```
@@ -40,6 +40,6 @@ AIの答えは間違っていることがあります。手順書と違うとき
 
 ## 困ったときは
 
-不具合の報告は、このテンプレートの[Issues](https://github.com/ishiishintaro123-glitch/creator-site-template-ja/issues)で受け付けています（あなたのサイトのリポジトリのIssuesではありません）。個人で開発しているため、対応までお時間をいただくことや、対応できない場合があります。個別の使い方のご質問にはお答えできないため、この手順書をご覧ください。
+不具合の報告は、このテンプレートの[Issues](https://github.com/shintaronovel/creator-site-template-ja/issues)で受け付けています（あなたのサイトのリポジトリのIssuesではありません）。個人で開発しているため、対応までお時間をいただくことや、対応できない場合があります。個別の使い方のご質問にはお答えできないため、この手順書をご覧ください。
 
-手順書の分かりにくい所や、書いてあるとおりに進まなかった所は、ぜひ[Issues](https://github.com/ishiishintaro123-glitch/creator-site-template-ja/issues)で教えてください。個別にお答えする代わりに、手順書を直して、次に読む人にも分かるようにします。どのページのどの部分か、書いてあると助かります。
+手順書の分かりにくい所や、書いてあるとおりに進まなかった所は、ぜひ[Issues](https://github.com/shintaronovel/creator-site-template-ja/issues)で教えてください。個別にお答えする代わりに、手順書を直して、次に読む人にも分かるようにします。どのページのどの部分か、書いてあると助かります。

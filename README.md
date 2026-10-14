@@ -22,13 +22,13 @@ GitHubとCloudflareの無料プランで公開できます。サイトのアド�
 
 ## 困ったときは
 
-不具合の報告は、このテンプレートの[Issues](https://github.com/ishiishintaro123-glitch/creator-site-template-ja/issues)で受け付けています（あなたのサイトのリポジトリのIssuesではありません）。個人で開発しているため、対応までお時間をいただくことや、対応できない場合があります。個別の使い方のご質問にはお答えできないため、[手順書](手順書/README.md)をご覧ください。手順書をAIに読み込ませて、自分の言葉で質問することもできます（[AIに聞く](手順書/README.md#aiに聞く)）。
+不具合の報告は、このテンプレートの[Issues](https://github.com/shintaronovel/creator-site-template-ja/issues)で受け付けています（あなたのサイトのリポジトリのIssuesではありません）。個人で開発しているため、対応までお時間をいただくことや、対応できない場合があります。個別の使い方のご質問にはお答えできないため、[手順書](手順書/README.md)をご覧ください。手順書をAIに読み込ませて、自分の言葉で質問することもできます（[AIに聞く](手順書/README.md#aiに聞く)）。
 
-手順書の分かりにくい所や、書いてあるとおりに進まなかった所は、ぜひ[Issues](https://github.com/ishiishintaro123-glitch/creator-site-template-ja/issues)で教えてください。個別にお答えする代わりに、手順書を直して、次に読む人にも分かるようにします。どのページのどの部分か、書いてあると助かります。
+手順書の分かりにくい所や、書いてあるとおりに進まなかった所は、ぜひ[Issues](https://github.com/shintaronovel/creator-site-template-ja/issues)で教えてください。個別にお答えする代わりに、手順書を直して、次に読む人にも分かるようにします。どのページのどの部分か、書いてあると助かります。
 
 ## セキュリティの問題を見つけたとき
 
-脆弱性（悪用されるおそれのある問題）は、公開のIssuesには書かず、このテンプレートの[Security](https://github.com/ishiishintaro123-glitch/creator-site-template-ja/security)のページにある「Report a vulnerability」から、非公開で知らせてください。
+脆弱性（悪用されるおそれのある問題）は、公開のIssuesには書かず、このテンプレートの[Security](https://github.com/shintaronovel/creator-site-template-ja/security)のページにある「Report a vulnerability」から、非公開で知らせてください。
 
 ## Pull Requestについて
 
@@ -36,7 +36,7 @@ GitHubとCloudflareの無料プランで公開できます。サイトのアド�
 
 ## 公式の配布元
 
-このテンプレートの公式の配布元は、GitHubアカウント「[ishiishintaro123-glitch](https://github.com/ishiishintaro123-glitch)」で公開しているリポジトリだけです。ほかの場所で配られているものは、中身が書き換えられているおそれがあります。
+このテンプレートの公式の配布元は、GitHubアカウント「[shintaronovel](https://github.com/shintaronovel)」で公開しているリポジトリだけです。ほかの場所で配られているものは、中身が書き換えられているおそれがあります。
 
 ## ライセンス
 
