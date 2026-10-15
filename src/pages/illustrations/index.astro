@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getGenres } from '../../lib/catalog';
+import ImageViewer from '../../components/ImageViewer.astro';
 import IllustrationFeedItem from '../../components/IllustrationFeedItem.astro';
 import IllustrationTile from '../../components/IllustrationTile.astro';
 import { siteConfig, t } from '../../site-config.mjs';
@@ -32,6 +33,7 @@ const genres = await getGenres();
 	<ul class="gallery">
 		{illustrations.map((illustration) => <IllustrationTile illustration={illustration} />)}
 	</ul>
+	<ImageViewer />
 </Layout>
 
 <style>
